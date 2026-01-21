@@ -9,7 +9,7 @@
   --shelf-height: 12px;
 }
 
-body {
+body.standard-ui {
     background-color: var(--paper-base) !important;
     background-image: url('../bookshelf/images/paper-fibers.png');
     background-repeat: repeat;
@@ -19,7 +19,7 @@ body {
     min-height: 100vh;
 }
 
-body::after {
+body.standard-ui::after {
     content: "";
     position: fixed;
     top: 0;

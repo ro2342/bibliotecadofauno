@@ -1,21 +1,26 @@
 /* Estilos base e configuração do Material 3 Expressive com Tailwind */
 :root {
-  --md-sys-color-primary: 190 80% 60%;
-  --md-sys-color-on-primary: 210 30% 10%;
-  --md-sys-color-primary-container: 190 70% 30%;
-  --md-sys-color-on-primary-container: 190 80% 90%;
-  --md-sys-color-surface-container-highest: 220 15% 15%;
-  --md-sys-color-surface-container-high: 220 15% 18%;
-  --md-sys-color-surface: 220 15% 12%;
-  --md-sys-color-on-surface: 220 10% 90%;
-  --md-sys-color-on-surface-variant: 220 10% 70%;
-  --md-sys-color-outline: 220 10% 40%;
+  /* Fauno Palette Harmonizada (HSL) */
+  --md-sys-color-primary: 68 30% 30%; /* Pine dark */
+  --md-sys-color-on-primary: 40 40% 95%; /* Cream */
+  --md-sys-color-primary-container: 68 20% 45%; 
+  --md-sys-color-on-primary-container: 40 40% 15%;
+  --md-sys-color-surface-container-highest: 40 20% 80%;
+  --md-sys-color-surface-container-high: 40 20% 85%;
+  --md-sys-color-surface: 40 25% 90%; /* Paper Base */
+  --md-sys-color-on-surface: 20 20% 15%; /* Ink / Coffee */
+  --md-sys-color-on-surface-variant: 20 15% 30%;
+  --md-sys-color-outline: 20 10% 50%;
   --md-sys-color-scrim: 0 0% 0%;
+  
+  --paper-texture: url('../images/paper-fibers.png');
 }
 
 body {
-  font-family: "Manrope", sans-serif;
+  font-family: "Lato", "Manrope", sans-serif;
   background-color: hsl(var(--md-sys-color-surface));
+  background-image: var(--paper-texture);
+  background-repeat: repeat;
   color: hsl(var(--md-sys-color-on-surface));
   transition:
     background-color 0.3s ease,
@@ -31,22 +36,10 @@ body {
 }
 
 .font-display {
-  font-family: "Roboto Flex", sans-serif;
+  font-family: "EB Garamond", "Roboto Flex", sans-serif;
   font-optical-sizing: auto;
   font-weight: 800;
   font-style: normal;
-  font-variation-settings:
-    "slnt" 0,
-    "wdth" 100,
-    "GRAD" 0,
-    "XOPQ" 96,
-    "XTRA" 468,
-    "YOPQ" 79,
-    "YTAS" 750,
-    "YTDE" -203,
-    "YTFI" 738,
-    "YTLC" 514,
-    "YTUC" 712;
 }
 
 .title-text-shadow {
