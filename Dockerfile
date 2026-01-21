@@ -1,8 +1,8 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim-bookworm
 
 # Install system dependencies
-# ImageMagick is required for cover processing
-# GCC/G++ and headers might be required for building some python packages (like lxml or python-ldap)
+# ImageMagick for cover processing
+# GCC/G++ and headers for lxml, python-ldap, etc.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     imagemagick \
     gcc \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
