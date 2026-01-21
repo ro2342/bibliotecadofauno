@@ -214,6 +214,9 @@ def create_app():
     register_scheduled_tasks(config.schedule_reconnect)
     register_startup_tasks()
 
+    from .bookshelf import bookshelf
+    app.register_blueprint(bookshelf)
+
     return app
 
 

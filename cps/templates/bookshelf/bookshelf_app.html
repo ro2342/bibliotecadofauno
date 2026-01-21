@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Tracker Pessoal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Folha de Estilos -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('bookshelf.static', filename='css/style.css') }}"
+    />
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Roboto+Flex:opsz,wght@8..144,1000&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap");
+    </style>
+    <!-- Bibliotecas JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- ADICIONADO: Biblioteca para 'arrastar e soltar' (Drag and Drop) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  </head>
+
+  <body class="bg-[hsl(var(--md-sys-color-surface))]">
+    <div id="app" class="relative min-h-screen">
+      <!-- MODAL OVERLAY -->
+      <div
+        id="modal-container"
+        class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+      >
+        <div id="modal-content">
+          <!-- O conteúdo do modal será injetado aqui pelo app.js -->
+        </div>
+      </div>
+
+      <!-- NAVIGATION RAIL (Desktop) -->
+      <nav
+        id="desktop-nav"
+        class="hidden md:flex flex-col items-center gap-4 fixed top-0 left-0 h-full w-20 bg-neutral-900/50 backdrop-blur-sm py-8 z-30 border-r border-neutral-800"
+      >
+        <a
+          href="#/estantes"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">shelves</span>
+          <span class="text-xs font-medium">Estantes</span>
+        </a>
+        <a
+          href="#/meus-livros"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">auto_stories</span>
+          <span class="text-xs font-medium">Meus Livros</span>
+        </a>
+        <a
+          href="#/estatisticas"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">query_stats</span>
+          <span class="text-xs font-medium">Estatísticas</span>
+        </a>
+        <a
+          href="#/ferramentas"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">build</span>
+          <span class="text-xs font-medium">Ferramentas</span>
+        </a>
+        <a
+          href="#/profile"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-xs font-medium">Perfil</span>
+        </a>
+        <a
+          href="#/settings"
+          class="nav-link flex items-center gap-1 p-3 rounded-full text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-full"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span class="text-xs font-medium">Config.</span>
+        </a>
+      </nav>
+
+      <!-- MAIN CONTENT -->
+      <main
+        id="main-content"
+        class="md:ml-20 pb-24 md:pb-8 px-4 sm:px-6 lg:px-8"
+      >
+        <div
+          id="page-loader"
+          class="flex flex-col items-center justify-center h-[70vh]"
+        >
+          <svg
+            class="animate-spin h-10 w-10 text-[hsl(var(--md-sys-color-primary))]"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p class="mt-4 text-neutral-400">Carregando sua estante...</p>
+        </div>
+        <div id="page-estantes" class="page hidden pt-8"></div>
+        <div id="page-meus-livros" class="page hidden pt-8"></div>
+        <div id="page-estatisticas" class="page hidden pt-8"></div>
+        <div id="page-ferramentas" class="page hidden pt-8"></div>
+        <div id="page-form" class="page hidden pt-8"></div>
+        <div id="page-details" class="page hidden pt-8"></div>
+        <div id="page-profile" class="page hidden pt-8"></div>
+        <div id="page-settings" class="page hidden pt-8"></div>
+      </main>
+
+      <!-- BOTTOM NAVIGATION BAR (Mobile) -->
+      <nav
+        class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-900/70 backdrop-blur-lg border-t border-neutral-800 z-30"
+      >
+        <div class="flex justify-around items-center h-20">
+          <a
+            href="#/estantes"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">shelves</span>
+            <span class="text-xs font-medium">Estantes</span>
+          </a>
+          <a
+            href="#/meus-livros"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="text-xs font-medium">Meus Livros</span>
+          </a>
+          <a
+            href="#/estatisticas"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">query_stats</span>
+            <span class="text-xs font-medium">Estatísticas</span>
+          </a>
+          <a
+            href="#/ferramentas"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">build</span>
+            <span class="text-xs font-medium">Ferramentas</span>
+          </a>
+          <a
+            href="#/profile"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">person</span>
+            <span class="text-xs font-medium">Perfil</span>
+          </a>
+          <a
+            href="#/settings"
+            class="nav-link flex flex-col items-center gap-1 p-2 rounded-2xl text-neutral-400 hover:bg-neutral-700/50 hover:text-white transition-colors duration-200 w-24"
+          >
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-xs font-medium">Config.</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Floating Action Button -->
+      <a
+        href="#/add"
+        id="fab-add-book"
+        class="hidden fixed bottom-24 right-6 md:bottom-12 md:right-12 z-40 bg-[hsl(var(--md-sys-color-primary))] text-[hsl(var(--md-sys-color-on-primary))] rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+      >
+        <span class="material-symbols-outlined !text-4xl">add</span>
+      </a>
+
+      <!-- Elemento oculto para gerar a imagem de partilha -->
+      <div
+        id="share-image-generator"
+        class="fixed -top-[9999px] -left-[9999px]"
+      ></div>
+    </div>
+
+    <!-- Módulo principal da aplicação -->
+    <script
+      type="module"
+      src="{{ url_for('bookshelf.static', filename='js/app.js') }}"
+    ></script>
+  </body>
+</html>

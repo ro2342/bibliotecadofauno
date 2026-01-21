@@ -138,12 +138,12 @@ LDAP_AUTH_SIMPLE         = 0
 DEFAULT_MAIL_SERVER = "mail.example.org"
 
 DEFAULT_PASSWORD    = "admin123"  # nosec
-DEFAULT_PORT        = 8083
+DEFAULT_PORT        = 8342
 env_CALIBRE_PORT = os.environ.get("CALIBRE_PORT", DEFAULT_PORT)
 try:
     DEFAULT_PORT = int(env_CALIBRE_PORT)
 except ValueError:
-    print('Environment variable CALIBRE_PORT has invalid value (%s), faling back to default (8083)' % env_CALIBRE_PORT)
+    print('Environment variable CALIBRE_PORT has invalid value (%s), faling back to default (8342)' % env_CALIBRE_PORT)
 del env_CALIBRE_PORT
 
 
