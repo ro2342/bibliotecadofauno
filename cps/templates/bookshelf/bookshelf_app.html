@@ -24,7 +24,13 @@
     />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap");
+      :root {
+        --md-sys-color-surface: 42, 33, 28; /* Fallback marrom escuro */
+        --md-sys-color-primary: 85, 107, 47; /* Moss Green */
+      }
     </style>
+    <!-- Biblioteca do Fauno Theme -->
+    <link href="{{ url_for('static', filename='css/lib_do_fauno.css') }}" rel="stylesheet" media="screen">
     <!-- Bibliotecas JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -32,7 +38,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   </head>
 
-  <body class="bg-[hsl(var(--md-sys-color-surface))]">
+  <body class="bg-[var(--paper-base)]">
     <div id="app" class="relative min-h-screen">
       <!-- MODAL OVERLAY -->
       <div
@@ -47,7 +53,7 @@
       <!-- NAVIGATION RAIL (Desktop) -->
       <nav
         id="desktop-nav"
-        class="hidden md:flex flex-col items-center gap-4 fixed top-0 left-0 h-full w-20 bg-neutral-900/50 backdrop-blur-sm py-8 z-30 border-r border-neutral-800"
+        class="hidden md:flex flex-col items-center gap-4 fixed top-0 left-0 h-full w-20 bg-[var(--wood-dark)] py-8 z-30 border-r border-[var(--ink-primary)]"
       >
         <a
           href="#/estantes"
@@ -136,7 +142,7 @@
 
       <!-- BOTTOM NAVIGATION BAR (Mobile) -->
       <nav
-        class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-900/70 backdrop-blur-lg border-t border-neutral-800 z-30"
+        class="md:hidden fixed bottom-0 left-0 w-full bg-[var(--wood-dark)] border-t border-[var(--ink-primary)] z-30"
       >
         <div class="flex justify-around items-center h-20">
           <a
@@ -188,7 +194,7 @@
       <a
         href="#/add"
         id="fab-add-book"
-        class="hidden fixed bottom-24 right-6 md:bottom-12 md:right-12 z-40 bg-[hsl(var(--md-sys-color-primary))] text-[hsl(var(--md-sys-color-on-primary))] rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+        class="hidden fixed bottom-24 right-6 md:bottom-12 md:right-12 z-40 bg-[var(--moss-green)] text-[var(--paper-base)] rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
       >
         <span class="material-symbols-outlined !text-4xl">add</span>
       </a>
@@ -200,10 +206,10 @@
       ></div>
     </div>
 
-    <!-- Módulo principal da aplicação -->
     <script
       type="module"
       src="{{ url_for('bookshelf.static', filename='js/app.js') }}"
     ></script>
+    <script src="{{ url_for('static', filename='js/lib_do_fauno.js') }}"></script>
   </body>
 </html>

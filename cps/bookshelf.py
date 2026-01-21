@@ -41,19 +41,52 @@ def get_data():
             })
 
 
-        # Get reading progress
+        # Get reading progress (ReadingProgress table - custom for Bookshelf)
         progress_entries = ub.session.query(ub.ReadingProgress).filter(
             ub.ReadingProgress.user_id == int(current_user.id)
         ).all()
         
+        # Get reading status (ReadBook table - standard Calibre-Web)
+        read_book_entries = ub.session.query(ub.ReadBook).filter(
+            ub.ReadBook.user_id == int(current_user.id)
+        ).all()
+        
         progress_data = {}
-        for p in progress_entries:
-            progress_data[p.book_id] = {
-                'percent': p.progress_percent,
-                'location': p.location,
-                'last_modified': p.last_modified.isoformat() if p.last_modified else None,
-                'data': p.data  # Include the extra metadata (status, rating, etc.)
+        
+        # 1. Map standard ReadBook status first
+        for rb in read_book_entries:
+            # Map ReadBook.read_status to Bookshelf status strings
+            status_str = 'quero-ler'
+            if rb.read_status == ub.ReadBook.STATUS_FINISHED:
+                status_str = 'lido'
+            elif rb.read_status == ub.ReadBook.STATUS_IN_PROGRESS:
+                status_str = 'lendo'
+                
+            progress_data[rb.book_id] = {
+                'percent': 1.0 if status_str == 'lido' else 0,
+                'location': 0,
+                'last_modified': None,
+                'data': {'status': status_str}
             }
+
+        # 2. Map ReadingProgress (overwrites or augments standard status)
+        for p in progress_entries:
+            if p.book_id in progress_data:
+                # Merge
+                progress_data[p.book_id].update({
+                    'percent': p.progress_percent,
+                    'location': p.location,
+                    'last_modified': p.last_modified.isoformat() if p.last_modified else None,
+                })
+                if p.data:
+                    progress_data[p.book_id]['data'].update(p.data)
+            else:
+                progress_data[p.book_id] = {
+                    'percent': p.progress_percent,
+                    'location': p.location,
+                    'last_modified': p.last_modified.isoformat() if p.last_modified else None,
+                    'data': p.data  # Include the extra metadata (status, rating, etc.)
+                }
 
         # Get shelves
         shelves = ub.session.query(ub.Shelf).filter(

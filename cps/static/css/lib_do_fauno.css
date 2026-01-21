@@ -1,0 +1,108 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+:root {
+  --paper-base: #F2E8D5;
+  --ink-primary: #2A211C;
+  --wood-dark: #4A3B2A;
+  --moss-green: #556B2F;
+  --shadow-soft: 0 4px 20px rgba(42, 33, 28, 0.1);
+  --shelf-height: 12px;
+}
+
+body {
+    background-color: var(--paper-base) !important;
+    background-image: url('../bookshelf/images/paper-fibers.png');
+    background-repeat: repeat;
+    color: var(--ink-primary) !important;
+    font-family: 'Lato', sans-serif !important;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 50%, rgba(42, 33, 28, 0.05) 100%);
+    z-index: 9999;
+}
+
+h1, h2, h3, h4, .navbar-brand {
+    font-family: 'EB+Garamond', serif !important;
+    font-weight: 700 !important;
+}
+
+.navbar {
+    background-color: var(--paper-base) !important;
+    background-image: url('../bookshelf/images/paper-fibers.png');
+    border-bottom: 2px solid var(--wood-dark) !important;
+    box-shadow: none !important;
+}
+
+.navbar-default .navbar-nav > li > a, 
+.navbar-default .navbar-brand {
+    color: var(--ink-primary) !important;
+}
+
+.navigation, #scnd-nav {
+    border-right: 1px solid rgba(74, 59, 42, 0.2);
+}
+
+.row-fluid [class*="col-"] {
+    margin-bottom: 30px;
+}
+
+[class*="col-"] img {
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 2px;
+    transition: transform 0.3s ease;
+}
+
+[class*="col-"]:hover img {
+    transform: translateY(-5px);
+}
+
+.row-fluid {
+    border-bottom: var(--shelf-height) solid var(--wood-dark);
+    margin-bottom: 40px;
+    box-shadow: 0 10px 10px -10px rgba(0,0,0,0.5);
+}
+
+.btn-primary, .btn-success {
+    background-color: var(--moss-green) !important;
+    border-color: var(--wood-dark) !important;
+    font-family: 'EB+Garamond', serif !important;
+}
+
+.lucide {
+    width: 1.2em;
+    height: 1.2em;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+    vertical-align: text-bottom;
+    margin-right: 5px;
+}
+
+#app.relative {
+    background-color: var(--paper-base);
+    background-image: url('images/paper-fibers.png');
+}
+
+#desktop-nav {
+    background-color: var(--wood-dark) !important;
+    border-right: 4px solid var(--ink-primary);
+}
+
+#main-content {
+    background: transparent !important;
+}
+
+.page {
+    color: var(--ink-primary);
+}

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="{{ current_user.locale }}">
   <head>
-    <title>{{instance}} | {{title}}</title>
+    <title>Biblioteca do Fauno | {{title}}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -22,6 +22,8 @@
        <link href="{{ url_for('static', filename='css/caliBlur.css') }}" rel="stylesheet" media="screen">
        <link href="{{ url_for('static', filename='css/caliBlur_override.css') }}" rel="stylesheet" media="screen">
     {% endif %}
+    <!-- Biblioteca do Fauno Theme -->
+    <link href="{{ url_for('static', filename='css/lib_do_fauno.css') }}" rel="stylesheet" media="screen">
   </head>
   <body class="{{ page }} {{ bodyClass }}{% if g.current_theme == 1 %} blur{% endif %}" data-text="{{_('Home')}}" data-textback="{{_('Back')}}">
     <!-- Static navbar -->
@@ -34,7 +36,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{url_for('web.index')}}">{{instance}}</a>
+          <a class="navbar-brand" href="{{url_for('web.index')}}">Biblioteca do Fauno</a>
         </div>
         {% if g.current_theme == 1 %}
             <div class="home-btn"><a class="home-btn-tooltip" href="{{url_for("web.index", page=1)}}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Home"></a></div>
@@ -59,7 +61,7 @@
           </ul>
           {% endif %}
           <ul class="nav navbar-nav navbar-left">
-              <li><a href="{{url_for('bookshelf.index')}}" target="_blank"><span class="glyphicon glyphicon-book"></span> Bookshelf</a></li>
+              <li><a href="{{url_for('bookshelf.index')}}" target="_blank"><span class="glyphicon glyphicon-book"></span> Estante</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right" id="main-nav">
             {% if current_user.is_authenticated or g.allow_anonymous %}
@@ -227,5 +229,6 @@
       <script src="{{ url_for('static', filename='js/caliBlur.js') }}"></script>
     {% endif %}
     {% block js %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/lib_do_fauno.js') }}"></script>
   </body>
 </html>
