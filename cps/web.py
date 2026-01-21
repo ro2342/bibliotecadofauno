@@ -92,14 +92,16 @@ sqlalchemy_version2 = ([int(x) if x.isnumeric() else 0 for x in sql_version.spli
 @app.after_request
 def add_security_headers(resp):
     default_src = ([host.strip() for host in config.config_trustedhosts.split(',') if host] +
-                   ["'self'", "'unsafe-inline'", "'unsafe-eval'"])
+                   ["'self'", "'unsafe-inline'", "'unsafe-eval'",
+                    "https://cdn.tailwindcss.com", "https://cdnjs.cloudflare.com",
+                    "https://unpkg.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com"])
     csp = "default-src " + ' '.join(default_src)
     if request.endpoint == "web.read_book" and config.config_use_google_drive:
         csp +=" blob: "
-    csp += "; font-src 'self' data:"
+    csp += "; font-src 'self' data: https://fonts.gstatic.com"
     if request.endpoint == "web.read_book":
         csp += " blob: "
-    csp += "; img-src 'self'"
+    csp += "; img-src 'self' https://placehold.co"
     if request.path.startswith("/author/") and config.config_use_goodreads:
         csp += " images.gr-assets.com i.gr-assets.com s.gr-assets.com"
     csp += " data:"
