@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, abort, send_from_directory, request, jsonify, url_for
+# Bookshelf Integration - Refined and Localized
 from flask_login import login_required, current_user
 import os
 from . import ub, db, calibre_db, logger
@@ -38,6 +39,7 @@ def get_data():
                 'series_index': book.series_index,
                 # Add more fields as needed by Bookshelf
             })
+
 
         # Get reading progress
         progress_entries = ub.session.query(ub.ReadingProgress).filter(
