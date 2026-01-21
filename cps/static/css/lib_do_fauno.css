@@ -31,8 +31,8 @@ body.standard-ui::after {
     z-index: 9999;
 }
 
-h1, h2, h3, h4, .navbar-brand {
-    font-family: 'EB+Garamond', serif !important;
+.standard-ui h1, .standard-ui h2, .standard-ui h3, .standard-ui h4, .standard-ui .navbar-brand {
+    font-family: 'EB Garamond', serif !important;
     font-weight: 700 !important;
 }
 
@@ -73,10 +73,10 @@ h1, h2, h3, h4, .navbar-brand {
     box-shadow: 0 10px 10px -10px rgba(0,0,0,0.5);
 }
 
-.btn-primary, .btn-success {
+.standard-ui .btn-primary, .standard-ui .btn-success {
     background-color: var(--moss-green) !important;
     border-color: var(--wood-dark) !important;
-    font-family: 'EB+Garamond', serif !important;
+    font-family: 'EB Garamond', serif !important;
 }
 
 .lucide {

@@ -1,233 +1,219 @@
 /* Estilos base e configuração do Material 3 Expressive com Tailwind */
 :root {
-  /* Fauno Palette Harmonizada (HSL) */
-  --md-sys-color-primary: 68 30% 30%; /* Pine dark */
-  --md-sys-color-on-primary: 40 40% 95%; /* Cream */
-  --md-sys-color-primary-container: 68 20% 45%; 
-  --md-sys-color-on-primary-container: 40 40% 15%;
-  --md-sys-color-surface-container-highest: 40 20% 80%;
-  --md-sys-color-surface-container-high: 40 20% 85%;
-  --md-sys-color-surface: 40 25% 90%; /* Paper Base */
-  --md-sys-color-on-surface: 20 20% 15%; /* Ink / Coffee */
-  --md-sys-color-on-surface-variant: 20 15% 30%;
-  --md-sys-color-outline: 20 10% 50%;
-  --md-sys-color-scrim: 0 0% 0%;
-  
-  --paper-texture: url('../images/paper-fibers.png');
+    --md-sys-color-primary: 190 80% 60%;
+    --md-sys-color-on-primary: 210 30% 10%;
+    --md-sys-color-primary-container: 190 70% 30%;
+    --md-sys-color-on-primary-container: 190 80% 90%;
+    --md-sys-color-surface-container-highest: 220 15% 15%;
+    --md-sys-color-surface-container-high: 220 15% 18%;
+    --md-sys-color-surface: 220 15% 12%;
+    --md-sys-color-on-surface: 220 10% 90%;
+    --md-sys-color-on-surface-variant: 220 10% 70%;
+    --md-sys-color-outline: 220 10% 40%;
+    --md-sys-color-scrim: 0 0% 0%;
 }
 
 body {
-  font-family: "Lato", "Manrope", sans-serif;
-  background-color: hsl(var(--md-sys-color-surface));
-  background-image: var(--paper-texture);
-  background-repeat: repeat;
-  color: hsl(var(--md-sys-color-on-surface));
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    font-family: 'Lato', 'Manrope', sans-serif;
+    background-color: hsl(var(--md-sys-color-surface));
+    background-image: url('../images/paper-fibers.png');
+    background-repeat: repeat;
+    color: hsl(var(--md-sys-color-on-surface));
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @font-face {
-  font-family: "Roboto Flex";
-  src:
-    local("Roboto Flex"),
-    url("robotoflex.ttf") format("truetype");
-  font-style: normal;
+    font-family: 'Roboto Flex';
+    src: local('Roboto Flex'), 
+         url('robotoflex.ttf') format('truetype');
+    font-style: normal;
 }
 
 .font-display {
-  font-family: "EB Garamond", "Roboto Flex", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 800;
-  font-style: normal;
+    font-family: "EB Garamond", serif;
+    font-weight: 800;
 }
 
 .title-text-shadow {
-  text-shadow: 1px 1px 8px hsl(var(--md-sys-color-primary) / 0.5);
+    text-shadow: 1px 1px 8px hsl(var(--md-sys-color-primary) / 0.5);
 }
 
 /* Estilos para Material Symbols */
 .material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 300,
-    "GRAD" 0,
-    "opsz" 24;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
 
 .material-symbols-outlined.filled {
-  font-variation-settings: "FILL" 1;
+    font-variation-settings: 'FILL' 1;
 }
 
 /* Cantos arredondados expressivos */
 .card-expressive {
-  border-radius: 28px;
-  background-color: hsl(var(--md-sys-color-surface-container-high));
-  transition: background-color 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-radius: 28px;
+    background-color: hsl(var(--md-sys-color-surface-container-high));
+    transition: background-color 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .btn-expressive {
-  border-radius: 24px;
-  padding: 12px 24px;
-  height: 52px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  transition: all 0.2s ease-in-out;
+    border-radius: 24px;
+    padding: 12px 24px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
 }
 
 .btn-primary {
-  background-color: hsl(var(--md-sys-color-primary));
-  color: hsl(var(--md-sys-color-on-primary));
+    background-color: hsl(var(--md-sys-color-primary));
+    color: hsl(var(--md-sys-color-on-primary));
 }
 
 .btn-primary:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 4px 12px hsla(var(--md-sys-color-primary), 0.4);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px hsla(var(--md-sys-color-primary), 0.4);
 }
 
 .btn-tonal {
-  background-color: hsl(var(--md-sys-color-primary-container));
-  color: hsl(var(--md-sys-color-on-primary-container));
+    background-color: hsl(var(--md-sys-color-primary-container));
+    color: hsl(var(--md-sys-color-on-primary-container));
 }
 
 .btn-tonal:hover {
-  filter: brightness(1.2);
+    filter: brightness(1.2);
 }
 
 .btn-text {
-  color: hsl(var(--md-sys-color-primary));
+    color: hsl(var(--md-sys-color-primary));
 }
 
 .btn-text:hover {
-  background-color: hsla(var(--md-sys-color-primary), 0.1);
+    background-color: hsla(var(--md-sys-color-primary), 0.1);
 }
 
-.segmented-btn-container > button {
-  border-radius: 9999px;
-  border: 1px solid hsl(var(--md-sys-color-outline));
+.segmented-btn-container>button {
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--md-sys-color-outline));
 }
 
-.segmented-btn-container > button.active {
-  background-color: hsl(var(--md-sys-color-primary-container));
-  color: hsl(var(--md-sys-color-on-primary-container));
-  border-color: hsl(var(--md-sys-color-primary));
+.segmented-btn-container>button.active {
+    background-color: hsl(var(--md-sys-color-primary-container));
+    color: hsl(var(--md-sys-color-on-primary-container));
+    border-color: hsl(var(--md-sys-color-primary));
 }
 
 /* Animação para surgimento das páginas */
 .page {
-  animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Estilo customizado para scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--md-sys-color-outline));
-  border-radius: 4px;
+    background: hsl(var(--md-sys-color-outline));
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsla(var(--md-sys-color-primary), 0.5);
+    background: hsla(var(--md-sys-color-primary), 0.5);
 }
 
 #desktop-nav {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #desktop-nav .nav-link {
-  justify-content: center;
-  width: 100%;
-  transition: justify-content 0.3s ease;
-  flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    transition: justify-content 0.3s ease;
+    flex-direction: row;
 }
 #desktop-nav.expanded .nav-link {
-  justify-content: flex-start;
-  padding-left: 1.5rem;
+    justify-content: flex-start;
+    padding-left: 1.5rem;
 }
 #desktop-nav .nav-link .text-xs {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  max-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-left: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    max-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-left: 1rem;
 }
 #desktop-nav.expanded .nav-link .text-xs {
-  opacity: 1;
-  max-width: 100px;
+    opacity: 1;
+    max-width: 100px;
 }
 #main-content {
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pagination-btn {
-  border: 1px solid hsl(var(--md-sys-color-outline));
-  color: hsl(var(--md-sys-color-on-surface-variant));
+    border: 1px solid hsl(var(--md-sys-color-outline));
+    color: hsl(var(--md-sys-color-on-surface-variant));
 }
 .pagination-btn.active {
-  background-color: hsl(var(--md-sys-color-primary-container));
-  color: hsl(var(--md-sys-color-on-primary-container));
-  border-color: hsl(var(--md-sys-color-primary));
+    background-color: hsl(var(--md-sys-color-primary-container));
+    color: hsl(var(--md-sys-color-on-primary-container));
+    border-color: hsl(var(--md-sys-color-primary));
 }
 .pagination-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Estilos para Mood Tags */
 .mood-tag-btn {
-  border: 1px solid hsl(var(--md-sys-color-outline));
-  transition: all 0.2s ease-in-out;
+    border: 1px solid hsl(var(--md-sys-color-outline));
+    transition: all 0.2s ease-in-out;
 }
 .mood-tag-btn.selected {
-  background-color: hsl(var(--md-sys-color-primary));
-  color: hsl(var(--md-sys-color-on-primary));
-  border-color: hsl(var(--md-sys-color-primary));
+    background-color: hsl(var(--md-sys-color-primary));
+    color: hsl(var(--md-sys-color-on-primary));
+    border-color: hsl(var(--md-sys-color-primary));
 }
 .mood-tag-pill {
-  background-color: hsla(var(--md-sys-color-primary), 0.2);
-  color: hsl(var(--md-sys-color-primary));
+    background-color: hsla(var(--md-sys-color-primary), 0.2);
+    color: hsl(var(--md-sys-color-primary));
 }
 
 .book-cover-preview {
-  width: 8rem;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 0.5rem;
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
+    width: 8rem;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 /* Estilos para o seletor visual de capas */
 .book-cover-selector img {
-  border: 3px solid transparent; /* Começa com uma borda transparente */
-  transition: all 0.2s ease-in-out;
+    border: 3px solid transparent; /* Começa com uma borda transparente */
+    transition: all 0.2s ease-in-out;
 }
 
 .book-cover-selector .peer:checked ~ img {
-  border-color: hsl(var(--md-sys-color-primary));
-  transform: scale(0.95);
-  box-shadow: 0 0 15px hsla(var(--md-sys-color-primary), 0.5);
+    border-color: hsl(var(--md-sys-color-primary));
+    transform: scale(0.95);
+    box-shadow: 0 0 15px hsla(var(--md-sys-color-primary), 0.5);
 }
