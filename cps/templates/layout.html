@@ -58,6 +58,9 @@
             {% if simple==true %} <li><a href="{{url_for('basic.index')}}" id="basic"><span class="glyphicon glyphicon-phone"></span><span>{{_('Simple Theme')}}</span></a><li>{% endif %}
           </ul>
           {% endif %}
+          <ul class="nav navbar-nav navbar-left">
+              <li><a href="{{url_for('bookshelf.index')}}" target="_blank"><span class="glyphicon glyphicon-book"></span> Bookshelf</a></li>
+          </ul>
           <ul class="nav navbar-nav navbar-right" id="main-nav">
             {% if current_user.is_authenticated or g.allow_anonymous %}
               {% if g.current_theme == 1 %}
