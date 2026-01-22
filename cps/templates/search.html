@@ -48,28 +48,42 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
         {% for entry in entries %}
         <div class="group session transition-all duration-300 transform hover:-translate-y-2">
-            <div class="relative card-expressive overflow-hidden mb-4 shadow-lg group-hover:shadow-2xl transition-shadow">
-                <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block aspect-[2/3]" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
+            <div class="relative overflow-hidden mb-4 shadow-lg group-hover:shadow-2xl transition-all duration-500 rounded-2xl aspect-[2/3] bg-neutral-200">
+                <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block w-full h-full" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
                     {{ image.book_cover(entry.Books) }}
-                    {% if entry[2] == True %}
-                    <div class="absolute top-2 right-2 bg-green-600 text-white p-1 rounded-full shadow-md flex items-center justify-center">
-                        <span class="material-symbols-outlined !text-xs">check</span>
+                    
+                    <!-- STATUS BADGES -->
+                    <div class="absolute top-3 right-3 flex flex-col gap-2 scale-90 group-hover:scale-100 transition-transform">
+                        {% if entry[2] == True %}
+                        <div class="bg-green-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter">
+                            <span class="material-symbols-outlined !text-[12px] FILL">check_circle</span>
+                            Lido
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
+
+                    <!-- OVERLAY GRADIENT -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
+                        <p class="text-white text-[10px] font-bold uppercase tracking-widest">{{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}</p>
+                    </div>
                 </a>
             </div>
             <div class="text-center sm:text-left">
                 <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-                    <h3 title="{{entry.Books.title}}" class="font-display text-lg font-bold truncate leading-tight">{{entry.Books.title}}</h3>
+                    <h3 title="{{entry.Books.title}}" class="font-display text-lg font-bold truncate leading-tight group-hover:text-[hsl(var(--md-sys-color-primary))] transition-colors">{{entry.Books.title}}</h3>
                 </a>
-                <p class="text-xs text-neutral-500 truncate mt-1">
-                    {% for author in entry.Books.authors %}
-                        {{author.name.replace('|',',')}}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                </p>
+                <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
+                    <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                        {% if entry.Books.series %}
+                            {{entry.Books.series[0].name}} #{{entry.Books.series_index|formatfloat(0)}}
+                        {% else %}
+                            {{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}
+                        {% endif %}
+                    </p>
+                </div>
                 {% if entry.Books.ratings.__len__() > 0 %}
-                <div class="flex gap-0.5 text-amber-500 mt-2 text-[10px]">
-                    {% for number in range((entry.Books.ratings[0].rating/2)|int(2)) %}
+                <div class="flex gap-0.5 text-amber-500 mt-2 text-[10px] justify-center sm:justify-start">
+                    {% for number in range((entry.Books.ratings[0].rating/2)|int) %}
                         <span class="material-symbols-outlined !text-[14px] FILL">star</span>
                     {% endfor %}
                 </div>
