@@ -247,7 +247,7 @@ class User(UserBase, Base):
     kindle_mail = Column(String(120), default="")
     shelf = relationship('Shelf', backref='user', lazy='dynamic', order_by='Shelf.name')
     downloads = relationship('Downloads', backref='user', lazy='dynamic')
-    locale = Column(String(2), default="pt_BR")
+    locale = Column(String(10), default="pt_BR")
     sidebar_view = Column(Integer, default=1)
     default_language = Column(String(3), default="all")
     denied_tags = Column(String, default="")

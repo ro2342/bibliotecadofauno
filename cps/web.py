@@ -111,6 +111,10 @@ def add_security_headers(resp):
         csp += " blob: ; style-src-elem 'self' blob: 'unsafe-inline'"
     csp += "; object-src 'none';"
     resp.headers['Content-Security-Policy'] = csp
+    resp.headers['X-Content-Type-Options'] = 'nosniff'
+    resp.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    resp.headers['X-XSS-Protection'] = '1; mode=block'
+    resp.headers['Strict-Transport-Security'] = 'max-age=31536000'
     return resp
 
 
