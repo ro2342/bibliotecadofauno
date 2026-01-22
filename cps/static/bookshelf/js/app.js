@@ -229,10 +229,14 @@ function setupInteractiveNav() {
 
 
 async function saveData(collectionName, data, docId = null) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     try {
         const response = await fetch('/bookshelf/api/save', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({ collection: collectionName, data: data, id: docId })
         });
         const result = await response.json();
@@ -263,10 +267,14 @@ async function saveBookOrder(shelfId, orderedBookIds) {
 
 
 async function deleteData(collectionName, docId) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     try {
         const response = await fetch('/bookshelf/api/delete', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({ collection: collectionName, id: docId })
         });
         const result = await response.json();
@@ -1203,7 +1211,9 @@ function setupFormListeners(container = document) {
 async function renderDetailsInModal(bookId) {
     const modalContainer = document.getElementById('modal-container');
     const modalContent = document.getElementById('modal-content');
-    let book = allBooks.find(b => b.id === bookId);
+    // Using loose equality (==) because bookId from URL hash is a string, 
+    // while b.id from the API is an integer.
+    let book = allBooks.find(b => b.id == bookId);
     if (!book) { hideModal(); return; }
 
     const ratingHtml = book.rating ? Array.from({ length: 5 }, (_, i) => `<span class="material-symbols-outlined text-amber-400 !text-3xl ${i < book.rating ? 'filled' : ''}">star</span>`).join('') : '<span class="text-neutral-400">Sem avaliação</span>';

@@ -26,6 +26,16 @@ def get_data():
             calibre_db.common_filters(allow_show_archived=True)
         ).all()
 
+        # Get all book/shelf mapping for the current user
+        user_shelves = ub.session.query(ub.Shelf).filter(ub.Shelf.user_id == int(current_user.id)).all()
+        user_shelf_ids = [s.id for s in user_shelves]
+        book_shelf_mappings = ub.session.query(ub.BookShelf).filter(ub.BookShelf.shelf.in_(user_shelf_ids)).all()
+        book_shelves_map = {}
+        for m in book_shelf_mappings:
+            if m.book_id not in book_shelves_map:
+                book_shelves_map[m.book_id] = []
+            book_shelves_map[m.book_id].append(str(m.shelf))
+
         books_data = []
         for book in entries:
             cover_url = url_for('web.get_cover', book_id=book.id)
@@ -34,9 +44,13 @@ def get_data():
                 'title': book.title,
                 'author': book.author_sort,
                 'coverUrl': cover_url,
+                'synopsis': book.comments[0].text if book.comments else "",
                 'addedAt': book.timestamp.isoformat() if book.timestamp else None,
                 'series': book.series[0].name if book.series else "",
                 'series_index': book.series_index,
+                'rating': int(book.ratings[0].rating / 2) if book.ratings else 0, # Calibre is 0-10
+                'shelves': book_shelves_map.get(book.id, []),
+                'categories': [t.name for t in book.tags] if book.tags else []
             })
 
         # Get reading progress
@@ -185,6 +199,15 @@ def api_save():
             shelf_id = data.get('shelfId')
             orderedIds = data.get('orderedBookIds', [])
             current_user.set_view_property('bookshelf', f'shelf_{shelf_id}_order', orderedIds)
+
+        elif coll == 'add_to_shelf':
+            shelf_id = int(data.get('shelfId'))
+            book_ids = [int(bid) for bid in data.get('bookIds', [])]
+            for bid in book_ids:
+                # Avoid duplicates
+                exists = ub.session.query(ub.BookShelf).filter_by(book_id=bid, shelf=shelf_id).first()
+                if not exists:
+                    ub.session.add(ub.BookShelf(book_id=bid, shelf=shelf_id))
 
         ub.session_commit()
         return jsonify({"status": "success", "id": obj_id})
