@@ -83,7 +83,7 @@
           <a class="navbar-brand" href="/">Biblioteca do Fauno</a>
         </div>
         
-        {% if g.user.is_authenticated %}
+        {% if current_user.is_authenticated %}
            <form class="navbar-form navbar-left" role="search" action="/search" method="GET">
             <div class="form-group input-group input-group-sm">
               <label for="query" class="sr-only">Search</label>
@@ -101,7 +101,7 @@
           </ul>
           
           <ul class="nav navbar-nav navbar-right" id="main-nav">
-            {% if g.user.is_authenticated %}
+            {% if current_user.is_authenticated %}
               {% if current_user.role_upload() %}
                   <li>
                     <form id="form-upload" class="navbar-form" action="/upload" data-title="Uploading..." data-footer="Close" data-failed="Error" data-message="Upload done, processing, please wait..." method="post" enctype="multipart/form-data">
