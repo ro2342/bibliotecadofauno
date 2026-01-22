@@ -138,6 +138,11 @@
           <div class="flex flex-col gap-2 w-full px-3">
               <a href="{{url_for('bookshelf.index')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Meus Livros">
                   <i data-lucide="book-open" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Ver Booktrack</span>
+              </a>
+
+              <a href="{{url_for('shelf.show_shelf', shelf_id=shelf.id)}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Meus Livros">
+                  <i data-lucide="book-open" class="w-5 h-5 flex-shrink-0"></i>
                   <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Meus Livros</span>
               </a>
 
