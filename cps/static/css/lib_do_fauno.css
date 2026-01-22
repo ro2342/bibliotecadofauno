@@ -1,21 +1,61 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+﻿/* === BIBLIOTECA DO FAUNO - Bookshelf Style System === */
 
+/* --- Material 3 Expressive Color Tokens (HSL) --- */
 :root {
-  --paper-base: #f2e8d5;
-  --ink-primary: #2a211c;
-  --wood-dark: #4a3b2a;
-  --moss-green: #556b2f;
+  /* Tema Padrão: Fauno */
+  --md-sys-color-primary: 68 60% 35%;
+  --md-sys-color-on-primary: 40 25% 98%;
+  --md-sys-color-primary-container: 68 40% 25%;
+  --md-sys-color-on-primary-container: 40 25% 95%;
+  --md-sys-color-surface: 40 25% 90%;
+  --md-sys-color-on-surface: 25 25% 15%;
+  --md-sys-color-surface-container-highest: 40 20% 85%;
+  --md-sys-color-surface-container-high: 40 20% 88%;
+  --md-sys-color-on-surface-variant: 25 15% 30%;
+  --md-sys-color-outline: 25 10% 50%;
+  --md-sys-color-scrim: 0 0% 0%;
+  
+  /* Legacy Variables (compatibilidade) */
+  --paper-base: #F2E8D5;
+  --ink-primary: #2A211C;
+  --wood-dark: #4A3B2A;
+  --moss-green: #556B2F;
   --shadow-soft: 0 4px 20px rgba(42, 33, 28, 0.1);
-  --shelf-height: 12px;
+}
+
+/* Tema alternativo: Dark (como no Bookshelf) */
+[data-theme="dark"] {
+  --md-sys-color-primary: 190 80% 60%;
+  --md-sys-color-on-primary: 210 30% 10%;
+  --md-sys-color-primary-container: 190 70% 30%;
+  --md-sys-color-on-primary-container: 190 80% 90%;
+  --md-sys-color-surface: 220 15% 12%;
+  --md-sys-color-on-surface: 220 10% 90%;
+  --md-sys-color-surface-container-highest: 220 15% 15%;
+  --md-sys-color-surface-container-high: 220 15% 18%;
+  --md-sys-color-on-surface-variant: 220 10% 70%;
+  --md-sys-color-outline: 220 10% 40%;
+}
+
+/* --- Base Styles --- */
+body {
+  font-family: 'Lato', 'Manrope', sans-serif;
+  background-color: hsl(var(--md-sys-color-surface));
+  background-image: url("{{ url_for('bookshelf.static', filename='images/paper-fibers.png') }}");
+  background-repeat: repeat;
+  color: hsl(var(--md-sys-color-on-surface));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.standard-ui {
-  background-color: var(--paper-base) !important;
-  background-image: url("../bookshelf/images/paper-fibers.png");
-  background-repeat: repeat;
-  color: var(--ink-primary) !important;
-  font-family: "Lato", sans-serif !important;
-  position: relative;
+  background-color: hsl(var(--md-sys-color-surface)) !important;
+  color: hsl(var(--md-sys-color-on-surface)) !important;
+}
+
+/* --- Typography --- */
+.font-display {
+  font-family: "EB Garamond", serif;
+  font-weight: 800;
 }
 
 .standard-ui h1,
@@ -27,25 +67,141 @@ body.standard-ui {
   font-weight: 700 !important;
 }
 
-.navbar {
-  background-color: var(--paper-base) !important;
-  background-image: url("../bookshelf/images/paper-fibers.png");
-  border-bottom: 2px solid var(--wood-dark) !important;
-  box-shadow: none !important;
+.title-text-shadow {
+  text-shadow: 1px 1px 8px hsl(var(--md-sys-color-primary) / 0.5);
 }
 
-.navbar-default .navbar-nav > li > a,
-.navbar-default .navbar-brand {
-  color: var(--ink-primary) !important;
+/* --- Card System (Material 3 Expressive) --- */
+.card-expressive {
+  border-radius: 28px;
+  background-color: hsl(var(--md-sys-color-surface-container-high));
+  transition: background-color 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
-.navigation,
-#scnd-nav {
-  border-right: 1px solid rgba(74, 59, 42, 0.2);
+.card-expressive:hover {
+  background-color: hsl(var(--md-sys-color-surface-container-highest));
 }
 
+/* --- Button System --- */
+.btn-expressive {
+  border-radius: 24px;
+  padding: 12px 24px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background-color: hsl(var(--md-sys-color-primary));
+  color: hsl(var(--md-sys-color-on-primary));
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px hsla(var(--md-sys-color-primary), 0.4);
+}
+
+.btn-tonal {
+  background-color: hsl(var(--md-sys-color-primary-container));
+  color: hsl(var(--md-sys-color-on-primary-container));
+}
+
+.btn-tonal:hover {
+  filter: brightness(1.2);
+}
+
+.btn-text {
+  color: hsl(var(--md-sys-color-primary));
+  background: transparent;
+}
+
+.btn-text:hover {
+  background-color: hsla(var(--md-sys-color-primary), 0.1);
+}
+
+/* --- Material Symbols --- */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1;
+}
+
+/* --- Lucide Icons --- */
+.lucide {
+  width: 1.2em;
+  height: 1.2em;
+  stroke-width: 2;
+  stroke: currentColor;
+  fill: none;
+  vertical-align: text-bottom;
+  margin-right: 5px;
+}
+
+/* --- Navigation Rail --- */
+#desktop-nav {
+  background-color: rgba(23, 23, 23, 0.5) !important;
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- Page Animations --- */
+.page {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Scrollbar Customization --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--md-sys-color-outline));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(var(--md-sys-color-primary), 0.5);
+}
+
+/* --- Book Cards --- */
+.book-card-link {
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.book-card-link:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* --- Legacy Compatibility --- */
 .row-fluid [class*="col-"] {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 [class*="col-"] img {
@@ -60,36 +216,33 @@ body.standard-ui {
 }
 
 .row-fluid {
-  border-bottom: var(--shelf-height) solid var(--wood-dark);
-  margin-bottom: 40px;
-  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  border-bottom: none !important;
+  box-shadow: none !important;
 }
 
-.standard-ui .btn-primary,
-.standard-ui .btn-success {
+.standard-ui .btn-primary:not(.btn-expressive),
+.standard-ui .btn-success:not(.btn-expressive) {
   background-color: var(--moss-green) !important;
   border-color: var(--wood-dark) !important;
   font-family: "EB Garamond", serif !important;
 }
 
-.lucide {
-  width: 1.2em;
-  height: 1.2em;
-  stroke-width: 2;
-  stroke: currentColor;
-  fill: none;
-  vertical-align: text-bottom;
-  margin-right: 5px;
+.navbar {
+  background-color: hsl(var(--md-sys-color-surface)) !important;
+  background-image: url("{{ url_for('bookshelf.static', filename='images/paper-fibers.png') }}");
+  border-bottom: 2px solid hsl(var(--md-sys-color-outline)) !important;
+  box-shadow: none !important;
 }
 
-#app.relative {
-  background-color: var(--paper-base);
-  background-image: url("images/paper-fibers.png");
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-brand {
+  color: hsl(var(--md-sys-color-on-surface)) !important;
 }
 
-#desktop-nav {
-  background-color: var(--wood-dark) !important;
-  border-right: 4px solid var(--ink-primary);
+.navigation,
+#scnd-nav {
+  border-right: 1px solid hsla(var(--md-sys-color-outline), 0.2);
 }
 
 #main-content {
@@ -97,5 +250,14 @@ body.standard-ui {
 }
 
 .page {
-  color: var(--ink-primary);
+  color: hsl(var(--md-sys-color-on-surface));
+}
+
+/* --- Book Cover Styling --- */
+.book-cover-preview {
+  width: 8rem;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }

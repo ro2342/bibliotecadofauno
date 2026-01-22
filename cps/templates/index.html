@@ -1,152 +1,167 @@
 {% import 'image.html' as image %}
 {% extends "layout.html" %}
 {% block body %}
-{% if continue_reading and continue_reading|length > 0 %}
-<section class="mb-12">
-  <h2 class="font-display text-2xl mb-6 flex items-center gap-2">
-    <span class="material-symbols-outlined text-[hsl(var(--md-sys-color-primary))]">play_circle</span>
-    {{_('Continue Reading')}}
-  </h2>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-    {% for item in continue_reading %}
-    <div class="group session transition-all duration-300 transform hover:-translate-y-2" id="books_continue">
-      <div class="relative overflow-hidden mb-4 shadow-lg group-hover:shadow-2xl transition-all duration-500 rounded-2xl aspect-[2/3] bg-neutral-200">
-          <a href="{{ url_for('web.read_book', book_id=item.book.id, book_format=item.format) }}" class="block w-full h-full">
+<!-- MAIN CONTENT WRAPPER -->
+<div class="max-w-4xl mx-auto space-y-8 pt-8">
+  
+  <!-- HEADER -->
+  <div class="flex items-center gap-4 mb-8">
+    {% if current_user.is_authenticated %}
+    <img src="{{ url_for('static', filename='generic_cover.jpg') }}" alt="Avatar" class="w-16 h-16 rounded-full object-cover shadow-lg bg-[hsl(var(--md-sys-color-primary))]">
+    <div>
+      <p class="text-xl text-neutral-400">Olá, <span class="font-bold text-[hsl(var(--md-sys-color-on-surface))]">{{current_user.name}}</span>!</p>
+      <h1 class="font-display text-5xl md:text-6xl text-[hsl(var(--md-sys-color-on-surface))]">{{title}}</h1>
+    </div>
+    {% else %}
+    <div>
+      <p class="text-xl text-neutral-400">Bem-vindo</p>
+      <h1 class="font-display text-5xl md:text-6xl text-[hsl(var(--md-sys-color-on-surface))]">{{title}}</h1>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- CARD: CONTINUE LENDO -->
+  {% if continue_reading and continue_reading|length > 0 %}
+  <div class="card-expressive p-6">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h2 class="font-display text-2xl text-[hsl(var(--md-sys-color-on-surface))]">{{_('Continue Reading')}}</h2>
+        <p class="text-sm text-neutral-400">{{continue_reading|length}} {{ 'livro' if continue_reading|length == 1 else 'livros' }}</p>
+      </div>
+    </div>
+    <div class="book-list-wrapper">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        {% for item in continue_reading %}
+        <div class="group relative flex-shrink-0">
+          <a href="{{ url_for('web.read_book', book_id=item.book.id, book_format=item.format) }}" class="block">
+            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md aspect-[2/3] bg-neutral-200">
               {{ image.book_cover(item.book) }}
-              
               <!-- PROGRESS OVERLAY -->
               <div class="absolute inset-x-0 bottom-0 h-1.5 bg-black/20">
                 <div class="h-full transition-all duration-500 bg-[hsl(var(--md-sys-color-primary))]" style="width: {{ item.progress_percent }}%;"></div>
               </div>
-              
-              <div class="absolute top-3 right-3 flex flex-col gap-2">
-                <div class="bg-blue-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter">
-                    <span class="material-symbols-outlined !text-[12px] animate-pulse">menu_book</span>
-                    {{ item.progress_percent }}%
+              <div class="absolute top-2 right-2">
+                <div class="bg-blue-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold">
+                  <span class="material-symbols-outlined !text-[12px]">menu_book</span>
+                  {{ item.progress_percent }}%
                 </div>
               </div>
-
               <!-- OVERLAY GRADIENT -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-                  <p class="text-white text-[10px] font-bold uppercase tracking-widest">{{item.book.authors[0].name if item.book.authors else 'Autor'}}</p>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-2">
+                  <p class="text-white text-[10px] font-bold">{{item.book.authors[0].name if item.book.authors else 'Autor'}}</p>
               </div>
+            </div>
+            <h3 class="text-sm font-bold truncate text-[hsl(var(--md-sys-color-on-surface))]">{{item.book.title}}</h3>
           </a>
-      </div>
-      <div class="text-center sm:text-left">
-        <a href="{{ url_for('web.read_book', book_id=item.book.id, book_format=item.format) }}">
-          <h3 title="{{item.book.title}}" class="font-display text-lg font-bold truncate leading-tight group-hover:text-[hsl(var(--md-sys-color-primary))] transition-colors">{{item.book.title}}</h3>
-        </a>
-        <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mt-1">
-          {% for author in item.book.authors %}{{author.name.replace('|',',')}}{% if not loop.last %}, {% endif %}{% endfor %}
-        </p>
+        </div>
+        {% endfor %}
       </div>
     </div>
-    {% endfor %}
   </div>
-</section>
-{% endif %}
+  {% endif %}
 
-{% if current_user.show_detail_random() and page != "discover" %}
-<section class="mb-12">
-  <h2 class="font-display text-2xl mb-6 flex items-center gap-2">
-    <span class="material-symbols-outlined text-[hsl(var(--md-sys-color-primary))]">auto_awesome</span>
-    {{_('Discover (Random Books)')}}
-  </h2>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-    {% for entry in random %}
-    <div class="group session transition-all duration-300 transform hover:-translate-y-2" id="books_rand">
-      <div class="relative overflow-hidden mb-4 shadow-lg group-hover:shadow-2xl transition-all duration-500 rounded-2xl aspect-[2/3] bg-neutral-200">
-          <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block w-full h-full" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
+  <!-- CARD: DISCOVER (RANDOM BOOKS) -->
+  {% if current_user.show_detail_random() and page != "discover" and random %}
+  <div class="card-expressive p-6">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h2 class="font-display text-2xl text-[hsl(var(--md-sys-color-on-surface))]">{{_('Discover (Random Books)')}}</h2>
+        <p class="text-sm text-neutral-400">{{random|length}} {{ 'livro' if random|length == 1 else 'livros' }}</p>
+      </div>
+    </div>
+    <div class="book-list-wrapper">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        {% for entry in random %}
+        <div class="group relative flex-shrink-0">
+          <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
+            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md aspect-[2/3] bg-neutral-200">
+              {{ image.book_cover(entry.Books) }}
+              <!-- STATUS BADGES -->
+              {% if entry[2] == True %}
+              <div class="absolute top-2 right-2">
+                <div class="bg-green-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold">
+                  <span class="material-symbols-outlined !text-[12px] filled">check_circle</span>
+                  Lido
+                </div>
+              </div>
+              {% endif %}
+              <!-- OVERLAY GRADIENT -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-2">
+                  <p class="text-white text-[10px] font-bold">{{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}</p>
+              </div>
+            </div>
+            <h3 class="text-sm font-bold truncate text-[hsl(var(--md-sys-color-on-surface))]">{{entry.Books.title}}</h3>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- CARD: TODOS OS LIVROS -->
+  <div class="card-expressive p-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+      <div>
+        <h2 class="font-display text-3xl text-[hsl(var(--md-sys-color-on-surface))]">{{title if not continue_reading else 'Todos os Livros'}}</h2>
+        <p class="text-sm text-neutral-400">{{entries|length}} {{ 'livro' if entries|length == 1 else 'livros' }}</p>
+      </div>
+      
+      {% if page != 'discover' %}
+      <div class="flex gap-2">
+        <div class="bg-white/20 p-1 rounded-xl backdrop-blur-sm flex gap-1">
+          <a title="{{_('Newest First')}}" class="p-2 rounded-lg transition-colors {% if order == 'new' %} bg-[hsl(var(--md-sys-color-primary))] text-white shadow-lg {% else %} hover:bg-white/20 {% endif %}" href="{{url_for('web.books_list', data=page, book_id=id, sort_param='new')}}">
+            <span class="material-symbols-outlined !text-sm">calendar_month</span>
+          </a>
+          <a title="{{_('Alphabetical')}}" class="p-2 rounded-lg transition-colors {% if order == 'abc' %} bg-[hsl(var(--md-sys-color-primary))] text-white shadow-lg {% else %} hover:bg-white/20 {% endif %}" href="{{url_for('web.books_list', data=page, book_id=id, sort_param='abc')}}">
+            <span class="material-symbols-outlined !text-sm">sort_by_alpha</span>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="book-list-wrapper">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        {% if entries[0] %}
+        {% for entry in entries %}
+        <div class="group relative flex-shrink-0">
+          <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
+            <div class="relative overflow-hidden mb-2 shadow-lg group-hover:shadow-2xl transition-all duration-500 rounded-md aspect-[2/3] bg-neutral-200">
               {{ image.book_cover(entry.Books) }}
               
               <!-- STATUS BADGES -->
-              <div class="absolute top-3 right-3 flex flex-col gap-2">
-                  {% if entry[2] == True %}
-                  <div class="bg-green-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter">
-                      <span class="material-symbols-outlined !text-[12px] FILL">check_circle</span>
-                      Lido
-                  </div>
-                  {% endif %}
+              {% if entry[2] == True %}
+              <div class="absolute top-2 right-2">
+                <div class="bg-green-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold">
+                  <span class="material-symbols-outlined !text-[12px] filled">check_circle</span>
+                  Lido
+                </div>
               </div>
+              {% endif %}
 
               <!-- OVERLAY GRADIENT -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-                  <p class="text-white text-[10px] font-bold uppercase tracking-widest">{{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}</p>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-2">
+                  <p class="text-white text-[10px] font-bold">{{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}</p>
               </div>
-          </a>
-      </div>
-      <div class="text-center sm:text-left">
-        <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-          <h3 title="{{entry.Books.title}}" class="font-display text-lg font-bold truncate leading-tight group-hover:text-[hsl(var(--md-sys-color-primary))] transition-colors">{{entry.Books.title}}</h3>
-        </a>
-        <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mt-1">
-          {% for author in entry.Books.authors %}{{author.name.replace('|',',')}}{% if not loop.last %}, {% endif %}{% endfor %}
-        </p>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
-
-<section>
-  <div class="flex flex-col sm:flex-row justify-between items-end mb-6 gap-4">
-    <h2 class="font-display text-3xl flex items-center gap-3">
-        <span class="material-symbols-outlined text-[hsl(var(--md-sys-color-primary))] !text-3xl">library_books</span>
-        {{title}}
-    </h2>
-    
-    {% if page != 'discover' %}
-    <div class="flex gap-2">
-        <div class="bg-white/20 p-1 rounded-xl backdrop-blur-sm flex gap-1">
-            <a title="{{_('Newest First')}}" class="p-2 rounded-lg transition-colors {% if order == 'new' %} bg-[hsl(var(--md-sys-color-primary))] text-white shadow-lg {% else %} hover:bg-white/20 {% endif %}" href="{{url_for('web.books_list', data=page, book_id=id, sort_param='new')}}"><span class="material-symbols-outlined !text-sm">calendar_month</span></a>
-            <a title="{{_('Alphabetical')}}" class="p-2 rounded-lg transition-colors {% if order == 'abc' %} bg-[hsl(var(--md-sys-color-primary))] text-white shadow-lg {% else %} hover:bg-white/20 {% endif %}" href="{{url_for('web.books_list', data=page, book_id=id, sort_param='abc')}}"><span class="material-symbols-outlined !text-sm">sort_by_alpha</span></a>
-        </div>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-    {% if entries[0] %}
-    {% for entry in entries %}
-    <div class="group session transition-all duration-300 transform hover:-translate-y-2" id="books">
-      <div class="relative overflow-hidden mb-4 shadow-lg group-hover:shadow-2xl transition-all duration-500 rounded-2xl aspect-[2/3] bg-neutral-200">
-          <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block w-full h-full" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-            {{ image.book_cover(entry.Books) }}
-            
-            <!-- STATUS BADGES -->
-            <div class="absolute top-3 right-3 flex flex-col gap-2">
-                {% if entry[2] == True %}
-                <div class="bg-green-600/90 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter">
-                    <span class="material-symbols-outlined !text-[12px] FILL">check_circle</span>
-                    Lido
-                </div>
+            </div>
+            <div class="text-center sm:text-left">
+              <h3 title="{{ entry.Books.title }}" class="text-sm font-bold truncate leading-tight text-[hsl(var(--md-sys-color-on-surface))]">{{entry.Books.title}}</h3>
+              <p class="text-[10px] text-neutral-400 truncate mt-0.5">
+                {% if entry.Books.series %}
+                  {{entry.Books.series[0].name}} #{{entry.Books.series_index|formatfloat(0)}}
+                {% else %}
+                  {{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}
                 {% endif %}
-            </div>
-
-            <!-- OVERLAY GRADIENT -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-                <p class="text-white text-[10px] font-bold uppercase tracking-widest">{{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}</p>
+              </p>
             </div>
           </a>
-      </div>
-      <div class="text-center sm:text-left">
-        <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-          <h3 title="{{ entry.Books.title }}" class="font-display text-lg font-bold truncate leading-tight group-hover:text-[hsl(var(--md-sys-color-primary))] transition-colors">{{entry.Books.title}}</h3>
-        </a>
-        <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
-          <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
-            {% if entry.Books.series %}
-              {{entry.Books.series[0].name}} #{{entry.Books.series_index|formatfloat(0)}}
-            {% else %}
-              {{entry.Books.authors[0].name if entry.Books.authors else 'Autor'}}
-            {% endif %}
-          </p>
         </div>
+        {% endfor %}
+        {% endif %}
       </div>
     </div>
-    {% endfor %}
-    {% endif %}
   </div>
-</section>
+
+</div>
 {% endblock %}

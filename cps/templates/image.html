@@ -7,6 +7,7 @@
         src="{{ url_for('web.get_cover', book_id=book.id, resolution='og', c=book|last_modified) }}"
         alt="{{ image_alt }}"
         loading="lazy"
+        class="w-full h-full object-cover"
     />
 {%- endmacro %}
 
