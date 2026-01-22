@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="book-list-wrapper">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {% for item in continue_reading %}
         <div class="group relative flex-shrink-0">
           <a href="{{ url_for('web.read_book', book_id=item.book.id, book_format=item.format) }}" class="block">
@@ -48,7 +48,7 @@
               </div>
               <!-- OVERLAY GRADIENT -->
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-2">
-                  <p class="text-white text-[10px] font-bold">{{item.book.authors[0].name if item.book.authors else 'Autor'}}</p>
+                  <p class="text-white text-[8px] font-semibold">{{item.book.authors[0].name if item.book.authors else 'Autor'}}</p>
               </div>
             </div>
             <h3 class="text-sm font-bold truncate text-[hsl(var(--md-sys-color-on-surface))]">{{item.book.title}}</h3>
@@ -70,7 +70,7 @@
       </div>
     </div>
     <div class="book-list-wrapper">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {% for entry in random %}
         <div class="group relative flex-shrink-0">
           <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
@@ -122,7 +122,7 @@
     </div>
 
     <div class="book-list-wrapper">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {% if entries[0] %}
         {% for entry in entries %}
         <div class="group relative flex-shrink-0">

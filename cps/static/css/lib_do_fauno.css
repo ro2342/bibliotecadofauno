@@ -91,6 +91,28 @@ body.standard-ui {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
+  z-index: 40 !important; /* Below navbar (z-1000) */
+}
+
+/* Increase icon and text sizes in Navigation Rail */
+#desktop-nav .nav-item i {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+#desktop-nav .nav-item span {
+  font-size: 14px !important;
+}
+
+/* Ensure navbar stays above Navigation Rail */
+.navbar.navbar-default {
+  z-index: 1001 !important;
+}
+
+/* Ensure main content is not covered by expanded nav */
+main {
+  position: relative;
+  z-index: 10;
 }
 
 /* --- Typography --- */
