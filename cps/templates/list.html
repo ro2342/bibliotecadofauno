@@ -2,56 +2,81 @@
 {% block body %}
 <h1 class="{{page}}">{{_(title)}}</h1>
 
-    <div class="filterheader hidden-xs">
+<div class="mb-10">
+    <div class="filterheader flex flex-wrap gap-4 items-center">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       {% if entries.__len__() and data == 'author' %}
-        <div id="sort_name" class="btn btn-primary"><b>B,A <-> A B</b></div>
+        <div id="sort_name" class="px-4 py-2 bg-[var(--moss-green)] text-white rounded-xl cursor-pointer font-bold hover:brightness-110 transition-all shadow-md">
+            <b>B,A <-> A B</b>
+        </div>
       {% endif %}
-      <div id="asc" data-order="{{ order }}" data-id="{{ data }}" class="btn btn-primary {% if order == 1 %} active{% endif%}"><span class="glyphicon glyphicon-sort-by-alphabet"></span></div>
-      <div id="desc" data-id="{{ data }}" class="btn btn-primary{% if order == 0 %} active{% endif%}"><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></div>
+      
+      <div class="flex bg-white/30 backdrop-blur-md rounded-xl p-1 shadow-sm border border-white/20">
+          <div id="asc" data-order="{{ order }}" data-id="{{ data }}" class="p-2 cursor-pointer rounded-lg transition-all {% if order == 1 %} bg-white/50 text-[var(--md-sys-color-primary)] shadow-sm {% else %} text-neutral-500 hover:text-black {% endif %}">
+              <i data-lucide="sort-asc" class="w-5 h-5"></i>
+          </div>
+          <div id="desc" data-id="{{ data }}" class="p-2 cursor-pointer rounded-lg transition-all {% if order == 0 %} bg-white/50 text-[var(--md-sys-color-primary)] shadow-sm {% else %} text-neutral-500 hover:text-black {% endif %}">
+              <i data-lucide="sort-desc" class="w-5 h-5"></i>
+          </div>
+      </div>
+
       {% if charlist|length %}
-      <div id="all" class="active btn btn-primary {% if charlist|length > 9 %}hidden-sm{% endif %}">{{_('All')}}</div>
+      <div id="all" class="px-4 py-2 bg-white/30 backdrop-blur-md rounded-xl cursor-pointer hover:bg-white/50 transition-all border border-white/20 text-sm font-bold active shadow-sm">{{_('All')}}</div>
       {% endif %}
-      <div class="btn-group character {% if charlist|length > 9 %}hidden-sm{% endif %}" role="group">
-        {% for char in charlist%}
-        <div class="btn btn-primary char">{{char[0]}}</div>
+
+      <div class="flex flex-wrap gap-2 character">
+        {% for char in charlist %}
+        <div class="char w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl cursor-pointer hover:bg-[var(--md-sys-color-primary)] hover:text-white transition-all border border-white/10 text-sm font-bold shadow-sm">{{char[0]}}</div>
         {% endfor %}
       </div>
 
       {% if data == "series" %}
-      <button class="update-view btn btn-primary" data-target="series_view" id="grid-button" data-view="grid">{{_('Grid')}}</button>
+      <button class="update-view px-4 py-2 bg-[var(--moss-green)] text-white rounded-xl shadow-md hover:brightness-110 transition-all font-bold" data-target="series_view" id="grid-button" data-view="grid">
+          <i data-lucide="layout-grid" class="inline-block mr-2 w-4 h-4"></i>{{_('Grid')}}
+      </button>
       {% endif %}
     </div>
-  <div class="container1">
-    <div id="list" class="col-xs-12 col-sm-6">
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="list">
     {% for entry in entries %}
-      {% if loop.index0 == (loop.length/2+loop.length%2)|int and loop.length > 20 %}
+    <a id="list_{{loop.index0}}" href="{% if entry.format %}{{url_for('web.books_list', data=data, sort_param='stored', book_id=entry.format )}}{% else %}{{url_for('web.books_list', data=data, sort_param='stored', book_id=entry[0].id )}}{% endif %}" 
+       class="card-expressive group p-6 hover:-translate-y-1 transition-transform cursor-pointer overflow-hidden border-2 border-transparent hover:border-[var(--md-sys-color-primary)]/20"
+       {% if entry[0].sort %}data-name="{{entry[0].name}}"{% endif %} 
+       data-id="{% if entry[0].sort %}{{entry[0].sort}}{% else %}{% if entry[0].format %}{{entry[0].format}}{% else %}{% if entry[0].rating %}{{entry[0].rating}}{% else %}{{entry[0].name}}{% endif %}{% endif %}{% endif %}">
+        
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex-grow min-w-0">
+                <span class="text-[hsl(var(--md-sys-color-primary))] font-bold text-[10px] uppercase tracking-widest block mb-1">
+                    {% if data == 'author' %}{{_('Author')}}{% elif data == 'series' %}{{_('Series')}}{% elif data == 'publisher' %}{{_('Publisher')}}{% else %}{{data|capitalize}}{% endif %}
+                </span>
+                <h3 class="font-display text-xl text-[var(--ink-primary)] truncate italic">
+                    {% if entry.name %}
+                        <div class="rating flex gap-0.5">
+                            {% for number in range(entry.name|int) %}
+                                <i data-lucide="star" class="w-4 h-4 fill-[var(--moss-green)] text-[var(--moss-green)]"></i>
+                            {% endfor %}
+                            {% for number in range(5 - entry.name|int) %}
+                                <i data-lucide="star" class="w-4 h-4 text-neutral-300"></i>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {% if entry.format %}{{entry.format}}{% else %}{{entry[0].name}}{% endif %}
+                    {% endif %}
+                </h3>
+            </div>
+            
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[var(--md-sys-color-primary)]/10 flex items-center justify-center border border-[var(--md-sys-color-primary)]/20 group-hover:bg-[var(--md-sys-color-primary)] group-hover:text-white transition-all">
+                <span class="text-sm font-bold">{{entry[1]}}</span>
+            </div>
         </div>
-        <div id="second" class="col-xs-12 col-sm-6">
-      {% endif %}
-      <div class="row" {% if entry[0].sort %}data-name="{{entry[0].name}}"{% endif %} data-id="{% if entry[0].sort %}{{entry[0].sort}}{% else %}{% if entry[0].format %}{{entry[0].format}}{% else %}{% if entry[0].rating %}{{entry[0].rating}}{% else %}{{entry[0].name}}{% endif %}{% endif %}{% endif %}">
-        <div class="col-xs-2 col-sm-2 col-md-1" align="left"><span class="badge">{{entry[1]}}</span></div>
-        <div class="col-xs-10 col-sm-10 col-md-11"><a id="list_{{loop.index0}}" href="{% if entry.format %}{{url_for('web.books_list', data=data, sort_param='stored', book_id=entry.format )}}{% else %}{{url_for('web.books_list', data=data, sort_param='stored', book_id=entry[0].id )}}{% endif %}">
-          {% if entry.name %}
-          <div class="rating">
-          {% for number in range(entry.name|int) %}
-            <span class="glyphicon glyphicon-star good"></span>
-            {% if loop.last and loop.index < 5 %}
-              {% for numer in range(5 - loop.index) %}
-                <span class="glyphicon glyphicon-star-empty"></span>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-          </div>
-          {% else %}
-          {% if entry.format %}
-            {{entry.format}}
-          {% else %}
-            {{entry[0].name}}{% endif %}{% endif %}</a></div>
-      </div>
+        
+        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+            <i data-lucide="library" class="w-24 h-24"></i>
+        </div>
+    </a>
     {% endfor %}
-    </div>
-  </div>
+</div>
 {% endblock %}
 {% block js %}
 <script src="{{ url_for('static', filename='js/filter_list.js') }}"></script>
