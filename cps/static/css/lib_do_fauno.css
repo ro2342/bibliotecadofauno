@@ -37,6 +37,26 @@
   --md-sys-color-outline: 220 10% 40%;
 }
 
+/* --- CRITICAL FIX: Bootstrap Collapse Override --- */
+/* The .collapse class was hiding navbar, menus, and all collapsible content */
+.collapse {
+  visibility: visible !important;
+}
+
+.collapse:not(.in) {
+  display: none;
+}
+
+.collapse.in {
+  display: block !important;
+}
+
+.navbar-collapse.collapse {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
 /* --- Base Styles --- */
 body {
   font-family: 'Lato', 'Manrope', sans-serif;
