@@ -73,15 +73,16 @@ body.standard-ui {
 
 /* --- Card System (Material 3 Expressive) --- */
 .card-expressive {
-  border-radius: 28px;
+  border-radius: 32px;
   background-color: hsl(var(--md-sys-color-surface-container-high));
   transition: background-color 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   overflow: hidden;
 }
 
 .card-expressive:hover {
   background-color: hsl(var(--md-sys-color-surface-container-highest));
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* --- Button System --- */
@@ -191,12 +192,81 @@ body.standard-ui {
 /* --- Book Cards --- */
 .book-card-link {
   text-decoration: none;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .book-card-link:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   text-decoration: none;
+}
+
+/* Larger book covers */
+.book-cover-container {
+  aspect-ratio: 2/3;
+  min-height: 280px;
+}
+
+@media (min-width: 768px) {
+  .book-cover-container {
+    min-height: 320px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .book-cover-container {
+    min-height: 360px;
+  }
+}
+
+/* --- Pagination Styling (Bookshelf Style) --- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 2rem auto;
+  padding: 1rem;
+  list-style: none !important;
+}
+
+.pagination .page-item {
+  list-style: none;
+}
+
+.pagination .page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: hsl(var(--md-sys-color-surface-container-high));
+  color: hsl(var(--md-sys-color-on-surface));
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid hsla(var(--md-sys-color-outline), 0.2);
+}
+
+.pagination .page-link:hover {
+  background-color: hsl(var(--md-sys-color-primary-container));
+  color: hsl(var(--md-sys-color-on-primary-container));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: hsl(var(--md-sys-color-primary));
+  color: hsl(var(--md-sys-color-on-primary));
+  box-shadow: 0 4px 12px hsla(var(--md-sys-color-primary), 0.3);
+  border-color: transparent;
+}
+
+.pagination .page-item.page-next .page-link,
+.pagination .page-item.page-previous .page-link {
+  font-weight: 600;
+  padding: 8px 16px;
 }
 
 /* --- Legacy Compatibility --- */

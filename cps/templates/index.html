@@ -34,7 +34,7 @@
         {% for item in continue_reading %}
         <div class="group relative flex-shrink-0">
           <a href="{{ url_for('web.read_book', book_id=item.book.id, book_format=item.format) }}" class="block">
-            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md aspect-[2/3] bg-neutral-200">
+            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md book-cover-container bg-neutral-200">
               {{ image.book_cover(item.book) }}
               <!-- PROGRESS OVERLAY -->
               <div class="absolute inset-x-0 bottom-0 h-1.5 bg-black/20">
@@ -74,7 +74,7 @@
         {% for entry in random %}
         <div class="group relative flex-shrink-0">
           <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" class="block" {% if simple==false %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md aspect-[2/3] bg-neutral-200">
+            <div class="relative overflow-hidden mb-2 shadow-lg transition-all duration-500 rounded-md book-cover-container bg-neutral-200">
               {{ image.book_cover(entry.Books) }}
               <!-- STATUS BADGES -->
               {% if entry[2] == True %}

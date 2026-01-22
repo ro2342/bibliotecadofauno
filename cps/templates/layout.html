@@ -70,68 +70,137 @@
   </head>
   <body class="standard-ui {{ page }} {{ bodyClass }}{% if g.current_theme == 1 %} blur{% endif %}" data-text="{{_('Home')}}" data-textback="{{_('Back')}}">
     
+    <!-- TOP NAVBAR (Search, Upload, Tasks, Admin) -->
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Biblioteca do Fauno</a>
+        </div>
+        
+        {% if g.user.is_authenticated %}
+           <form class="navbar-form navbar-left" role="search" action="/search" method="GET">
+            <div class="form-group input-group input-group-sm">
+              <label for="query" class="sr-only">Search</label>
+              <input type="text" class="form-control" id="query" name="query" placeholder="{{_('Search Library')}}" value="">
+              <span class="input-group-btn">
+                <button type="submit" id="query_submit" class="btn btn-default">{{_('Search')}}</button>
+              </span>
+            </div>
+          </form>
+        {% endif %}
+        
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/advsearch" id="advanced_search"><span class="glyphicon glyphicon-search"></span><span class="hidden-sm"> {{_('Advanced Search')}}</span></a></li>
+          </ul>
+          
+          <ul class="nav navbar-nav navbar-right" id="main-nav">
+            {% if g.user.is_authenticated %}
+              {% if current_user.role_upload() %}
+                  <li>
+                    <form id="form-upload" class="navbar-form" action="/upload" data-title="Uploading..." data-footer="Close" data-failed="Error" data-message="Upload done, processing, please wait..." method="post" enctype="multipart/form-data">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <div class="form-group">
+                        <span class="btn btn-default btn-file">{{_('Upload')}}<input id="btn-upload" name="btn-upload" type="file" accept=".mp3,.djvu,.ogg,.pdf,.cbr,.mp4,.doc,.odt,.epub,.cbt,.mobi,.m4a,.flac,.txt,.opus,.fb2,.kepub,.m4b,.lit,.azw,.rtf,.wav,.docx,.cbz,.azw3,.html,.prc" multiple=""></span>
+                        <input class="hide" id="btn-upload2" name="btn-upload2" type="file" accept=".mp3,.djvu,.ogg,.pdf,.cbr,.mp4,.doc,.odt,.epub,.cbt,.mobi,.m4a,.flac,.txt,.opus,.fb2,.kepub,.m4b,.lit,.azw,.rtf,.wav,.docx,.cbz,.azw3,.html,.prc">
+                      </div>
+                    </form>
+                  </li>
+              {% endif %}
+              
+              {% if current_user.role_admin() %}
+                <li class="top_tasks"><a id="top_tasks" href="/tasks"><span class="glyphicon glyphicon-tasks"></span> <span class="hidden-sm">{{_('Tasks')}}</span></a></li>
+                <li><a id="top_admin" data-text="Settings" href="/admin/view"><span class="glyphicon glyphicon-dashboard"></span> <span class="hidden-sm">{{_('Admin')}}</span></a></li>
+              {% endif %}
+              
+              <li><a id="top_user" data-text="Account" href="/me"><span class="glyphicon glyphicon-user"></span> <span class="hidden-sm">{{current_user.name}}</span></a></li>
+              <li><a id="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span> <span class="hidden-sm">{{_('Logout')}}</span></a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div id="app-root" class="relative flex flex-col md:flex-row">
       
-      <!-- NAVIGATION RAIL (Desktop) -->
-      <nav id="desktop-nav" class="hidden md:flex flex-col items-center fixed top-0 left-0 h-full w-20 hover:w-64 bg-[var(--wood-dark)]/80 backdrop-blur-xl py-6 z-50 border-r border-white/10 transition-all duration-300 group overflow-hidden">
-          <div class="px-6 mb-10 w-full flex items-center justify-center group-hover:justify-start gap-4">
-              <i data-lucide="library" class="!w-8 !h-8 text-[hsl(var(--md-sys-color-on-primary))]"></i>
-              <span class="font-display text-xl text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Biblioteca Fauno</span>
-          </div>
+      <!-- NAVIGATION RAIL (Desktop) - Bookshelf Style with Hover Expansion -->
+      <nav id="desktop-nav" class="hidden md:flex flex-col items-center gap-4 fixed top-0 left-0 h-full w-20 hover:w-64 bg-black/60 backdrop-blur-md py-8 z-50 border-r border-white/5 transition-all duration-300 group">
+          <a href="{{url_for('web.index')}}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[hsl(var(--md-sys-color-primary))] text-white mb-6 shadow-lg shadow-[hsl(var(--md-sys-color-primary))]/20 hover:scale-105 transition-transform" title="{{_('Home')}}">
+              <i data-lucide="library" class="w-6 h-6"></i>
+          </a>
           
-          <div class="flex flex-col gap-4 w-full px-3">
-              <a href="{{url_for('web.index')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="{{_('Home')}}">
-                  <i data-lucide="home" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{{_('Home')}}</span>
+          <div class="flex flex-col gap-2 w-full px-3">
+              <a href="{{url_for('bookshelf.index')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Meus Livros">
+                  <i data-lucide="book-open" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Meus Livros</span>
               </a>
 
-              <a href="{{url_for('bookshelf.index')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Meus Livros">
-                  <i data-lucide="book-open" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Meus Livros</span>
+              <a href="{{url_for('web.category_list')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Estantes">
+                  <i data-lucide="layers" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Estantes</span>
               </a>
 
-              <a href="{{url_for('web.category_list')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Categorias">
-                  <i data-lucide="layout-grid" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Categorias</span>
+              <a href="{{url_for('about.stats')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Estatísticas">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Estatísticas</span>
               </a>
 
-              <a href="{{url_for('about.stats')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Estatísticas">
-                  <i data-lucide="bar-chart-3" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Estatísticas</span>
+              {% if current_user.role_upload() %}
+              <a href="{{url_for('edit-book.upload')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Upload">
+                  <i data-lucide="cloud-upload" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Upload</span>
               </a>
+              {% endif %}
 
               {% if current_user.role_admin() %}
-              <a href="{{url_for('admin.admin')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Ferramentas">
-                  <i data-lucide="hammer" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Ferramentas</span>
+              <a href="{{url_for('tasks.get_tasks_status')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Tarefas">
+                  <i data-lucide="list-todo" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Tarefas</span>
+              </a>
+
+              <a href="{{url_for('admin.admin')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Admin">
+                  <i data-lucide="hammer" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Admin</span>
               </a>
               {% endif %}
           </div>
 
-          <div class="mt-auto flex flex-col gap-4 w-full px-3">
-              <a href="{{url_for('web.profile')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="{{current_user.name}}">
-                  <i data-lucide="settings" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Config.</span>
+          <div class="mt-auto flex flex-col gap-2 w-full px-3">
+              <a href="{{url_for('web.profile')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Perfil">
+                  <i data-lucide="user" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Perfil</span>
               </a>
+
+              <a href="{{url_for('admin.view_configuration')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-white/70 hover:bg-white/10 hover:text-white transition-all" title="Configurações">
+                  <i data-lucide="settings" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Configurações</span>
+              </a>
+
               {% if not current_user.is_anonymous %}
-              <a href="{{url_for('web.logout')}}" class="nav-item flex items-center gap-4 p-3 rounded-full text-red-300 hover:bg-white/10 hover:text-red-100 transition-all w-full" title="{{_('Logout')}}">
-                  <i data-lucide="log-out" class="!w-6 !h-6"></i>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Sair</span>
+              <a href="{{url_for('web.logout')}}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-2xl text-red-400/70 hover:bg-red-500/10 hover:text-red-400 transition-all" title="Sair">
+                  <i data-lucide="log-out" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">Sair</span>
               </a>
               {% endif %}
           </div>
       </nav>
 
       <!-- MOBILE BOTTOM NAV -->
-      <nav class="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-[var(--wood-dark)]/90 backdrop-blur-xl border-t border-white/10 rounded-2xl z-50 flex justify-around items-center px-4 shadow-2xl">
+      <nav class="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl z-50 flex justify-around items-center px-4 shadow-2xl">
           <a href="{{url_for('web.index')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
-              <i data-lucide="home"></i>
+              <i data-lucide="library"></i>
           </a>
           <a href="{{url_for('bookshelf.index')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
               <i data-lucide="book-open"></i>
           </a>
           <a href="{{url_for('web.category_list')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
-              <i data-lucide="layout-grid"></i>
+              <i data-lucide="layers"></i>
           </a>
           <a href="{{url_for('web.profile')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
               <i data-lucide="user"></i>
