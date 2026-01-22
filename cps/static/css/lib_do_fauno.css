@@ -291,6 +291,17 @@ body.standard-ui {
   box-shadow: none !important;
 }
 
+/* HIDE OLD SIDEBAR - Using modern Navigation Rail instead */
+.col-sm-2 {
+  display: none !important;
+}
+
+/* Expand main content to full width since sidebar is hidden */
+.col-sm-10 {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
 .standard-ui .btn-primary:not(.btn-expressive),
 .standard-ui .btn-success:not(.btn-expressive) {
   background-color: var(--moss-green) !important;
