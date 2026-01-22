@@ -90,9 +90,9 @@
                   <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Meus Livros</span>
               </a>
 
-              <a href="{{url_for('web.books_list', data='all', sort_param='stored')}}" class="nav-item flex items-center gap-4 p-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Estantes">
-                  <span class="material-symbols-outlined !text-2xl">shelves</span>
-                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Estantes</span>
+              <a href="{{url_for('web.category_list')}}" class="nav-item flex items-center gap-4 p-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Categorias">
+                  <span class="material-symbols-outlined !text-2xl">category</span>
+                  <span class="text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Categorias</span>
               </a>
 
               <a href="{{url_for('about.stats')}}" class="nav-item flex items-center gap-4 p-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all w-full" title="Estatísticas">
@@ -130,8 +130,8 @@
           <a href="{{url_for('bookshelf.index')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
               <span class="material-symbols-outlined">auto_stories</span>
           </a>
-          <a href="{{url_for('web.books_list', data='all', sort_param='stored')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
-              <span class="material-symbols-outlined">shelves</span>
+          <a href="{{url_for('web.category_list')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
+              <span class="material-symbols-outlined">category</span>
           </a>
           <a href="{{url_for('web.profile')}}" class="flex items-center justify-center text-white/50 hover:text-white transition-colors">
               <span class="material-symbols-outlined">person</span>
