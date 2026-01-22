@@ -52,6 +52,26 @@ body.standard-ui {
   color: hsl(var(--md-sys-color-on-surface)) !important;
 }
 
+/* --- Top Navbar (CRITICAL - Must be visible) --- */
+.navbar.navbar-default {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  margin-bottom: 0 !important;
+}
+
+.navbar .container-fluid {
+  display: block !important;
+}
+
+/* Ensure navbar is above Navigation Rail */
+#desktop-nav {
+  top: 56px !important; /* Height of navbar */
+  height: calc(100vh - 56px) !important;
+}
+
 /* --- Typography --- */
 .font-display {
   font-family: "EB Garamond", serif;
