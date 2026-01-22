@@ -66,10 +66,11 @@ body.standard-ui {
   display: block !important;
 }
 
-/* Ensure navbar is above Navigation Rail */
+/* Navigation Rail positioning */
 #desktop-nav {
-  top: 56px !important; /* Height of navbar */
-  height: calc(100vh - 56px) !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* --- Typography --- */
@@ -311,15 +312,9 @@ body.standard-ui {
   box-shadow: none !important;
 }
 
-/* HIDE OLD SIDEBAR - Using modern Navigation Rail instead */
-.col-sm-2 {
+/* Hide ONLY the old sidebar navigation content, not the whole column */
+.navigation {
   display: none !important;
-}
-
-/* Expand main content to full width since sidebar is hidden */
-.col-sm-10 {
-  width: 100% !important;
-  max-width: 100% !important;
 }
 
 .standard-ui .btn-primary:not(.btn-expressive),
