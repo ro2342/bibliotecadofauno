@@ -12,7 +12,7 @@ services:
       - PUID=1000
       - PGID=1000
       # Edit to match your current timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-      - TZ=UTC
+      - TZ=${TZ:-UTC}
       # Sets the listening port for the application. Defaults to 8342 here; override CWA_PORT in
       # your local .env (gitignored) to pick a different one, e.g. CWA_PORT=8083 to drop in as a
       # replacement for an existing calibre-web-automated instance.
