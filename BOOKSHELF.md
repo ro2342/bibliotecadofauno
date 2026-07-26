@@ -36,6 +36,25 @@ Só duas edições no core, o resto é tudo arquivo novo:
 Isso é proposital: manter esse footprint mínimo é o que torna viável puxar atualizações do upstream do
 CWA sem brigar com conflito de merge toda hora.
 
+## Audiobookshelf (opcional)
+
+Se você usa [Audiobookshelf](https://github.com/advplyr/audiobookshelf) pros audiobooks, o Bookshelf pode
+puxar o progresso de lá também — configure `AUDIOBOOKSHELF_URL` e `AUDIOBOOKSHELF_TOKEN` (env vars, ver
+`docker-compose.yml`). Sem essas duas variáveis, o recurso fica desligado e nada muda.
+
+- **Só leitura**: o Bookshelf lê status/progresso/datas do ABS a cada 60s (cache em memória) e nunca
+  escreve de volta nele. Continue controlando o audiobook pelo app/servidor do ABS normalmente.
+- **Casamento com o Calibre**: livros que existem nos dois (ex: você tem o ebook no Calibre e o audiobook
+  no ABS) são casados por título+autor normalizados (`cps/bookshelf.py:_norm`) e viram **um card só** —
+  o progresso do ABS só empurra o status/progresso pra frente (nunca reduz o que já estava mais avançado),
+  e nunca sobrescreve um valor que você editou manualmente.
+- **Audiobook sem edição em ebook**: vira um card próprio, com id sintético `abs:<item_id>` (não existe
+  como `Books.id` no Calibre). Esse card guarda tudo — status, progresso, estante, edições manuais — em
+  `view_settings`, já que não há uma linha em `ReadBook`/`BookShelf` pra ele.
+- Capas dos audiobooks são servidas via `/bookshelf/api/abs-cover/<item_id>`, um proxy que busca a imagem
+  no ABS no servidor (nunca expõe o token da API no navegador, e funciona mesmo se o ABS só for acessível
+  de dentro da rede do container).
+
 ## Limitações conhecidas
 
 - `ReadBook` do CWA não tem uma coluna de "data de término" dedicada — a Bookshelf aproxima usando

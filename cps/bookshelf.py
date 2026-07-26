@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, url_for
+from flask import Blueprint, render_template, request, jsonify, url_for, Response, abort
 # Bookshelf Integration - ported onto calibre-web-automated.
 # Reading status/progress is read from and written back to CWA's own tables
 # (ReadBook, KoboReadingState/KoboBookmark) so Kobo/KOReader sync and the
@@ -6,10 +6,16 @@ from flask import Blueprint, render_template, request, jsonify, url_for
 # (personal notes, manual dates, "abandonado" status, review text, etc.) are
 # stored in current_user.view_settings['bookshelf'], which already exists on
 # every user row - no new tables/migrations needed.
+#
+# Audiobooks tracked in Audiobookshelf (github.com/advplyr/audiobookshelf) are merged
+# in read-only: matched against Calibre books by normalized title+author when possible,
+# otherwise shown as a synthetic "abs:<item_id>" card. See cps/services/audiobookshelf.py.
 from flask_login import login_required, current_user
 import os
+import re
 from datetime import datetime, timezone
 from . import ub, db, calibre_db, logger
+from .services import audiobookshelf
 
 bookshelf = Blueprint('bookshelf', __name__,
                      url_prefix='/bookshelf',
@@ -56,10 +62,100 @@ def _apply_native_status(rb, status_str):
     rb.read_status = new_status
 
 
+def _norm(s):
+    return re.sub(r'[^a-z0-9]+', '', (s or '').lower())
+
+
+def _abs_ts(ms):
+    if not ms:
+        return None
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).isoformat()
+
+
+_STATUS_RANK = {'quero-ler': 0, 'abandonado': 0, 'lendo': 1, 'lido': 2}
+
+
+def _merge_audiobookshelf(books_data, manual_books):
+    abs_items, abs_progress = audiobookshelf.fetch_snapshot()
+    if not abs_items:
+        return
+
+    calibre_index = {(_norm(b['title']), _norm(b['author'])): b for b in books_data}
+
+    for item_id, item in abs_items.items():
+        meta = (item.get('media') or {}).get('metadata') or {}
+        title = meta.get('title', '')
+        author = meta.get('authorName', '')
+        prog = abs_progress.get(item_id)
+        abs_status = 'quero-ler'
+        if prog:
+            if prog.get('isFinished'):
+                abs_status = 'lido'
+            elif prog.get('currentTime'):
+                abs_status = 'lendo'
+
+        match = calibre_index.get((_norm(title), _norm(author)))
+        if match is not None:
+            match['hasAudiobook'] = True
+            match_manual = manual_books.get(str(match['id']), {})
+            if prog:
+                if 'status' not in match_manual and _STATUS_RANK.get(abs_status, 0) > _STATUS_RANK.get(match['status'], 0):
+                    match['status'] = abs_status
+                if 'currentProgress' not in match_manual:
+                    match['currentProgress'] = max(match['currentProgress'], prog.get('progress') or 0)
+                if not match.get('startDate') and prog.get('startedAt'):
+                    match['startDate'] = _abs_ts(prog.get('startedAt'))
+                if not match.get('endDate') and prog.get('finishedAt'):
+                    match['endDate'] = _abs_ts(prog.get('finishedAt'))
+            continue
+
+        # No matching Calibre book - show as its own, Audiobookshelf-only card.
+        virtual_id = 'abs:{}'.format(item_id)
+        manual = manual_books.get(virtual_id, {})
+        status = manual.get('status', abs_status)
+        progress = manual.get('currentProgress', (prog.get('progress') if prog else 0) or 0)
+        series = meta.get('seriesName', '')
+        if not series and meta.get('series'):
+            series = meta['series'][0].get('name', '')
+
+        entry = {
+            'id': virtual_id,
+            'title': title,
+            'author': author,
+            'coverUrl': url_for('bookshelf.abs_cover', item_id=item_id),
+            'synopsis': meta.get('description', '') or '',
+            'addedAt': None,
+            'series': series,
+            'series_index': None,
+            'rating': 0,
+            'shelves': manual.get('shelves', []),
+            'categories': meta.get('genres', []) or [],
+            'status': status,
+            'currentProgress': progress,
+            'startDate': _abs_ts(prog.get('startedAt')) if prog else None,
+            'endDate': _abs_ts(prog.get('finishedAt')) if prog else None,
+            'timesStartedReading': 0,
+            'source': 'audiobookshelf',
+        }
+        entry.update({k: v for k, v in manual.items() if k not in ('status', 'currentProgress', 'shelves')})
+        books_data.append(entry)
+
+
 @bookshelf.route('/')
 @login_required
 def index():
     return render_template('bookshelf_app.html')
+
+
+@bookshelf.route('/api/abs-cover/<item_id>')
+@login_required
+def abs_cover(item_id):
+    # Proxies the cover through our own server so the Audiobookshelf token never
+    # reaches the browser and this works even if ABS isn't reachable from the client.
+    content, content_type = audiobookshelf.cover_bytes(item_id)
+    if content is None:
+        abort(404)
+    return Response(content, mimetype=content_type)
 
 
 @bookshelf.route('/api/data')
@@ -124,6 +220,8 @@ def get_data():
             entry.update({k: v for k, v in manual.items() if k not in ('status', 'currentProgress')})
             books_data.append(entry)
 
+        _merge_audiobookshelf(books_data, manual_books)
+
         shelves_data = [{'id': s.id, 'name': s.name, 'is_public': s.is_public} for s in user_shelves]
 
         profile_ns = _bookshelf_ns()
@@ -164,34 +262,46 @@ def api_save():
         obj_id = req.get('id')
 
         if coll == 'books':
-            book_id = int(obj_id) if obj_id else None
-            if not book_id:
+            if not obj_id:
                 return jsonify({"status": "error", "message": "Book creation requires Calibre"}), 501
 
-            rb = _get_or_create_read_book(book_id)
-
+            # Audiobookshelf-only cards ("abs:<item_id>") have no Calibre book_id to hang
+            # ReadBook/BookShelf rows off of, so everything about them - status, progress,
+            # shelves - lives in view_settings instead of the DB tables.
+            is_virtual = isinstance(obj_id, str) and obj_id.startswith('abs:')
             manual_fields = {k: v for k, v in data.items() if k != 'shelves'}
             status = manual_fields.get('status')
-            if status:
-                _apply_native_status(rb, status)
+
+            if is_virtual:
+                key = obj_id
+            else:
+                book_id = int(obj_id)
+                key = str(book_id)
+                rb = _get_or_create_read_book(book_id)
+                if status:
+                    _apply_native_status(rb, status)
 
             books = _manual_books()
-            entry = books.get(str(book_id), {})
+            entry = books.get(key, {})
             entry.update(manual_fields)
-            books[str(book_id)] = entry
-            current_user.set_view_property('bookshelf', 'books', books)
 
             if 'shelves' in data:
-                new_shelf_ids = [int(sid) for sid in data['shelves']]
-                user_shelves = ub.session.query(ub.Shelf).filter_by(user_id=current_user.id).all()
-                user_shelf_ids = [s.id for s in user_shelves]
-                ub.session.query(ub.BookShelf).filter(
-                    ub.BookShelf.book_id == book_id,
-                    ub.BookShelf.shelf.in_(user_shelf_ids)
-                ).delete(synchronize_session=False)
-                for sid in new_shelf_ids:
-                    if sid in user_shelf_ids:
-                        ub.session.add(ub.BookShelf(book_id=book_id, shelf=sid))
+                if is_virtual:
+                    entry['shelves'] = data['shelves']
+                else:
+                    new_shelf_ids = [int(sid) for sid in data['shelves']]
+                    user_shelves = ub.session.query(ub.Shelf).filter_by(user_id=current_user.id).all()
+                    user_shelf_ids = [s.id for s in user_shelves]
+                    ub.session.query(ub.BookShelf).filter(
+                        ub.BookShelf.book_id == book_id,
+                        ub.BookShelf.shelf.in_(user_shelf_ids)
+                    ).delete(synchronize_session=False)
+                    for sid in new_shelf_ids:
+                        if sid in user_shelf_ids:
+                            ub.session.add(ub.BookShelf(book_id=book_id, shelf=sid))
+
+            books[key] = entry
+            current_user.set_view_property('bookshelf', 'books', books)
 
         elif coll == 'shelves':
             shelf_id = int(obj_id) if obj_id else None
@@ -242,10 +352,12 @@ def api_delete():
         obj_id = req.get('id')
 
         if coll == 'books':
-            book_id = int(obj_id)
-            ub.session.query(ub.ReadBook).filter_by(user_id=current_user.id, book_id=book_id).delete()
+            is_virtual = isinstance(obj_id, str) and obj_id.startswith('abs:')
+            key = obj_id if is_virtual else str(int(obj_id))
+            if not is_virtual:
+                ub.session.query(ub.ReadBook).filter_by(user_id=current_user.id, book_id=int(obj_id)).delete()
             books = _manual_books()
-            books.pop(str(book_id), None)
+            books.pop(key, None)
             current_user.set_view_property('bookshelf', 'books', books)
 
         elif coll == 'shelves':
