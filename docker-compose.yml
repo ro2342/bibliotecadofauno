@@ -39,17 +39,21 @@ services:
       # Accepts: true/yes/1 to disable auto-mount (default: false)
       # - DISABLE_LIBRARY_AUTOMOUNT=false
     volumes:
-      # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings etc.
-      # IMPORTANT: bind a COPY of your existing config folder here, not the live one in use by your
-      # running instance - CWA will run its own DB migrations (new tables) against app.db on first boot.
-      - /path/to/config/folder:/config
+      # Real host paths come from your local .env (CWA_CONFIG_DIR / CWA_INGEST_DIR / CWA_LIBRARY_DIR),
+      # so this file stays a generic template - no personal server paths committed to the repo.
+      #
+      # CW/CWA users migrating an existing install: point CWA_CONFIG_DIR at it directly to carry over
+      # users/settings (no need for a copy - Bookshelf adds no new tables/migrations of its own, so this
+      # is exactly as safe as a normal calibre-web-automated version bump; still, back it up first, see
+      # BOOKSHELF.md).
+      - ${CWA_CONFIG_DIR:-/path/to/config/folder}:/config
       # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
-      - /path/to/the/folder/you/want/to/use/for/book/ingest:/cwa-book-ingest
+      - ${CWA_INGEST_DIR:-/path/to/the/folder/you/want/to/use/for/book/ingest}:/cwa-book-ingest
       # If you don't have an existing library, CWA will automatically create one at the bind provided here
-      - /path/to/your/calibre/library:/calibre-library
+      - ${CWA_LIBRARY_DIR:-/path/to/your/calibre/library}:/calibre-library
       # If you use calibre plugins, you can bind your plugins folder here to have CWA attempt to add them to it's workflow (WIP)
       # If you are starting with a fresh install, you also need to copy customize.py.json to the Calibre config volume above, in /path/to/config/folder/.config/calibre/customize.py.json, see the README for more info
-      - /path/to/your/calibre/plugins/folder:/config/.config/calibre/plugins
+      # - /path/to/your/calibre/plugins/folder:/config/.config/calibre/plugins
     ports:
       # Same CWA_PORT override as above controls both sides here.
       - "${CWA_PORT:-8342}:${CWA_PORT:-8342}"
