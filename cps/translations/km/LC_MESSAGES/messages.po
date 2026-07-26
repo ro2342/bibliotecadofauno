@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version:  Calibre-Web Automated\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-05 13:13+0000\n"
+"POT-Creation-Date: 2026-07-26 16:47+0000\n"
 "PO-Revision-Date: 2018-08-27 17:06+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1153,7 +1153,7 @@ msgid "Cannot upload format: Book no longer exists in library"
 msgstr ""
 
 #: cps/editbooks.py:152 cps/editbooks.py:179 cps/templates/book_edit.html:52
-#: cps/templates/layout.html:152
+#: cps/templates/layout.html:155
 msgid "Upload done, processing, please wait..."
 msgstr ""
 
@@ -1677,7 +1677,7 @@ msgid "{} Stars"
 msgstr ""
 
 #: cps/remotelogin.py:76 cps/templates/layout.html:135
-#: cps/templates/layout.html:177 cps/templates/login.html:11
+#: cps/templates/layout.html:180 cps/templates/login.html:11
 #: cps/templates/login.html:39 cps/web.py:2187
 msgid "Login"
 msgstr "ចូលប្រើប្រាស់"
@@ -2015,7 +2015,7 @@ msgstr "ធ្នើ៖ ‘%(name)s’"
 msgid "Error opening shelf. Shelf does not exist or is not accessible"
 msgstr "មានបញ្ហាពេលបើកធ្នើ។ ពុំមានធ្នើ ឬមិនអាចបើកបាន"
 
-#: cps/tasks_status.py:37 cps/templates/layout.html:163
+#: cps/tasks_status.py:37 cps/templates/layout.html:166
 #: cps/templates/tasks.html:7
 msgid "Tasks"
 msgstr "កិច្ចការនានា"
@@ -2170,7 +2170,7 @@ msgstr ""
 msgid "Error creating shelf"
 msgstr ""
 
-#: cps/templates/layout.html:326 cps/web.py:1153
+#: cps/templates/layout.html:329 cps/web.py:1153
 #, fuzzy
 msgid "Create Magic Shelf"
 msgstr "បង្កើតធ្នើ"
@@ -2285,7 +2285,7 @@ msgstr "សៀវភៅបានចូលជួរសម្រាប់ផ្ញ
 msgid "Please wait one minute to register next user"
 msgstr ""
 
-#: cps/templates/layout.html:136 cps/templates/layout.html:178
+#: cps/templates/layout.html:136 cps/templates/layout.html:181
 #: cps/templates/login.html:48 cps/templates/register.html:17 cps/web.py:2066
 #: cps/web.py:2070 cps/web.py:2075 cps/web.py:2079 cps/web.py:2085
 #: cps/web.py:2110 cps/web.py:2114 cps/web.py:2127 cps/web.py:2130
@@ -2603,7 +2603,7 @@ msgid "Clearing cover thumbnail cache"
 msgstr ""
 
 #: cps/tasks/upload.py:28 cps/templates/admin.html:22
-#: cps/templates/layout.html:155 cps/templates/user_table.html:146
+#: cps/templates/layout.html:158 cps/templates/user_table.html:146
 msgid "Upload"
 msgstr "អាប់ឡូដ"
 
@@ -2633,7 +2633,7 @@ msgstr "ឧបករណ៍ Kindle"
 msgid "Send to eReader Subject"
 msgstr "ផ្ញើទៅ Kindle"
 
-#: cps/templates/admin.html:19 cps/templates/layout.html:166
+#: cps/templates/admin.html:19 cps/templates/layout.html:169
 #: cps/templates/user_table.html:144
 msgid "Admin"
 msgstr "រដ្ឋបាល"
@@ -3029,14 +3029,14 @@ msgid "Convert book"
 msgstr ""
 
 #: cps/templates/book_edit.html:52 cps/templates/book_edit.html:69
-#: cps/templates/layout.html:152 cps/templates/layout.html:283
+#: cps/templates/layout.html:155 cps/templates/layout.html:286
 msgid "Uploading..."
 msgstr "កំពុងអាប់ឡូត..."
 
 #: cps/templates/book_edit.html:52 cps/templates/book_edit.html:292
 #: cps/templates/book_table.html:342 cps/templates/duplicates.html:766
-#: cps/templates/layout.html:152 cps/templates/layout.html:373
-#: cps/templates/layout.html:438 cps/templates/modal_dialogs.html:34
+#: cps/templates/layout.html:155 cps/templates/layout.html:376
+#: cps/templates/layout.html:441 cps/templates/modal_dialogs.html:34
 #: cps/templates/user_edit.html:573
 msgid "Close"
 msgstr "បិទ"
@@ -3050,7 +3050,7 @@ msgstr "បិទ"
 #: cps/templates/hardcover_review_matches.html:369
 #: cps/templates/hardcover_review_matches.html:400
 #: cps/templates/hardcover_review_matches.html:409
-#: cps/templates/layout.html:152
+#: cps/templates/layout.html:155
 msgid "Error"
 msgstr ""
 
@@ -5318,7 +5318,7 @@ msgstr "បន្ថែមទៅធ្នើ"
 #: cps/templates/detail.html:590 cps/templates/detail.html:612
 #: cps/templates/detail.html:765 cps/templates/detail.html:1251
 #: cps/templates/feed.xml:83 cps/templates/feed.xml:85
-#: cps/templates/layout.html:314 cps/templates/layout.html:323
+#: cps/templates/layout.html:317 cps/templates/layout.html:326
 #: cps/templates/listenmp3.html:201 cps/templates/listenmp3.html:218
 #: cps/templates/search.html:22
 msgid "(Public)"
@@ -5734,7 +5734,7 @@ msgstr "ជ្រើសរើសឈ្មោះអ្នកប្រើប្រ
 msgid "Denied Domains (Blacklist)"
 msgstr ""
 
-#: cps/templates/feed.xml:22 cps/templates/layout.html:357
+#: cps/templates/feed.xml:22 cps/templates/layout.html:360
 msgid "Next"
 msgstr "បន្ទាប់"
 
@@ -6019,98 +6019,102 @@ msgstr "បិទ/បើកការរុករក"
 msgid "Search Library"
 msgstr "នៅក្នុងបណ្ណាល័យ"
 
-#: cps/templates/layout.html:133 cps/templates/layout.html:170
+#: cps/templates/layout.html:133 cps/templates/layout.html:173
 #: cps/templates/user_edit.html:305 cps/templates/user_edit.html:307
 msgid "Account"
 msgstr ""
 
-#: cps/templates/layout.html:139 cps/templates/layout.html:172
+#: cps/templates/layout.html:139 cps/templates/layout.html:175
 msgid "Logout"
 msgstr "ចេញពីការប្រើប្រាស់"
 
-#: cps/templates/layout.html:147
+#: cps/templates/layout.html:145
+msgid "Bookshelf"
+msgstr ""
+
+#: cps/templates/layout.html:150
 #, fuzzy
 msgid "Switch Theme"
 msgstr "ការតុបតែងសម្រាប់ប្រើ"
 
-#: cps/templates/layout.html:166 cps/templates/read.html:78
+#: cps/templates/layout.html:169 cps/templates/read.html:78
 #: cps/templates/readcbr.html:70 cps/templates/readcbr.html:96
 #, fuzzy
 msgid "Settings"
 msgstr "ការកំណត់"
 
-#: cps/templates/layout.html:168
+#: cps/templates/layout.html:171
 #, fuzzy
 msgid "Refresh Library"
 msgstr "ស៊េរីនានាក្នុងបណ្ណាល័យនេះ"
 
-#: cps/templates/layout.html:209
+#: cps/templates/layout.html:212
 msgid "See Changelog"
 msgstr ""
 
-#: cps/templates/layout.html:219
+#: cps/templates/layout.html:222
 #, fuzzy
 msgid "Open Duplicates"
 msgstr "លុបសៀវភៅ"
 
-#: cps/templates/layout.html:241
+#: cps/templates/layout.html:244
 msgid "Contribute here!"
 msgstr ""
 
-#: cps/templates/layout.html:284
+#: cps/templates/layout.html:287
 #, fuzzy
 msgid "Please do not refresh the page"
 msgstr "កំពុងធ្វើបច្ចុប្បន្នភាព សូមកុំបើកទំព័រជាថ្មី"
 
-#: cps/templates/layout.html:294
+#: cps/templates/layout.html:297
 msgid "Browse"
 msgstr "រុករក"
 
-#: cps/templates/layout.html:311 cps/templates/search_form.html:88
+#: cps/templates/layout.html:314 cps/templates/search_form.html:88
 #, fuzzy
 msgid "Shelves"
 msgstr "លើកលែងស៊េរី"
 
-#: cps/templates/layout.html:317
+#: cps/templates/layout.html:320
 #, fuzzy
 msgid "Create Shelf"
 msgstr "បង្កើតធ្នើ"
 
-#: cps/templates/layout.html:321
+#: cps/templates/layout.html:324
 msgid "Magic Shelves ✨"
 msgstr ""
 
-#: cps/templates/layout.html:330 cps/templates/stats.html:3
+#: cps/templates/layout.html:333 cps/templates/stats.html:3
 msgid "About"
 msgstr "អំពី"
 
-#: cps/templates/layout.html:342
+#: cps/templates/layout.html:345
 msgid "Previous"
 msgstr "មុន"
 
-#: cps/templates/layout.html:369
+#: cps/templates/layout.html:372
 msgid "Book Details"
 msgstr "ព័ត៌មានលម្អិតរបស់សៀវភៅ"
 
-#: cps/templates/layout.html:439
+#: cps/templates/layout.html:442
 #, fuzzy
 msgid "Duplicate Books Detected"
 msgstr "លុបសៀវភៅ"
 
-#: cps/templates/layout.html:440
+#: cps/templates/layout.html:443
 msgid "You have unresolved duplicate books in your library"
 msgstr ""
 
-#: cps/templates/layout.html:445
+#: cps/templates/layout.html:448
 #, fuzzy
 msgid "Duplicate Groups Found"
 msgstr "លទ្ធផលសម្រាប់៖"
 
-#: cps/templates/layout.html:453
+#: cps/templates/layout.html:456
 msgid "Remind Me Later"
 msgstr ""
 
-#: cps/templates/layout.html:456
+#: cps/templates/layout.html:459
 msgid "View & Resolve Duplicates"
 msgstr ""
 

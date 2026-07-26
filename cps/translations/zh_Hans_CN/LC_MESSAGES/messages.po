@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version:  Calibre-Web Automated\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-05 13:13+0000\n"
+"POT-Creation-Date: 2026-07-26 16:47+0000\n"
 "PO-Revision-Date: 2020-09-27 22:18+0800\n"
 "Last-Translator: xlivevil <xlivevil@aliyun.com>\n"
 "Language-Team: zh_Hans_CN <LL@li.org>\n"
@@ -1159,7 +1159,7 @@ msgid "Cannot upload format: Book no longer exists in library"
 msgstr ""
 
 #: cps/editbooks.py:152 cps/editbooks.py:179 cps/templates/book_edit.html:52
-#: cps/templates/layout.html:152
+#: cps/templates/layout.html:155
 msgid "Upload done, processing, please wait..."
 msgstr "上传完成，正在处理，请稍候..."
 
@@ -1688,7 +1688,7 @@ msgid "{} Stars"
 msgstr "{} 星"
 
 #: cps/remotelogin.py:76 cps/templates/layout.html:135
-#: cps/templates/layout.html:177 cps/templates/login.html:11
+#: cps/templates/layout.html:180 cps/templates/login.html:11
 #: cps/templates/login.html:39 cps/web.py:2187
 msgid "Login"
 msgstr "登录"
@@ -2015,7 +2015,7 @@ msgstr "书架：%(name)s"
 msgid "Error opening shelf. Shelf does not exist or is not accessible"
 msgstr "打开书架出错。书架不存在或不可访问"
 
-#: cps/tasks_status.py:37 cps/templates/layout.html:163
+#: cps/tasks_status.py:37 cps/templates/layout.html:166
 #: cps/templates/tasks.html:7
 msgid "Tasks"
 msgstr "任务列表"
@@ -2175,7 +2175,7 @@ msgstr ""
 msgid "Error creating shelf"
 msgstr "删除书架时出错"
 
-#: cps/templates/layout.html:326 cps/web.py:1153
+#: cps/templates/layout.html:329 cps/web.py:1153
 #, fuzzy
 msgid "Create Magic Shelf"
 msgstr "创建书架"
@@ -2296,7 +2296,7 @@ msgstr "书籍已经成功加入 %(eReadermail)s 的发送队列"
 msgid "Please wait one minute to register next user"
 msgstr "请等待一分钟注册下一个用户"
 
-#: cps/templates/layout.html:136 cps/templates/layout.html:178
+#: cps/templates/layout.html:136 cps/templates/layout.html:181
 #: cps/templates/login.html:48 cps/templates/register.html:17 cps/web.py:2066
 #: cps/web.py:2070 cps/web.py:2075 cps/web.py:2079 cps/web.py:2085
 #: cps/web.py:2110 cps/web.py:2114 cps/web.py:2127 cps/web.py:2130
@@ -2611,7 +2611,7 @@ msgid "Clearing cover thumbnail cache"
 msgstr "正在清理封面缩略图缓存"
 
 #: cps/tasks/upload.py:28 cps/templates/admin.html:22
-#: cps/templates/layout.html:155 cps/templates/user_table.html:146
+#: cps/templates/layout.html:158 cps/templates/user_table.html:146
 msgid "Upload"
 msgstr "上传书籍"
 
@@ -2639,7 +2639,7 @@ msgstr "接收书籍的电子阅读器邮箱地址"
 msgid "Send to eReader Subject"
 msgstr "发送到电子阅读器"
 
-#: cps/templates/admin.html:19 cps/templates/layout.html:166
+#: cps/templates/admin.html:19 cps/templates/layout.html:169
 #: cps/templates/user_table.html:144
 msgid "Admin"
 msgstr "管理权限"
@@ -3026,14 +3026,14 @@ msgid "Convert book"
 msgstr "转换书籍"
 
 #: cps/templates/book_edit.html:52 cps/templates/book_edit.html:69
-#: cps/templates/layout.html:152 cps/templates/layout.html:283
+#: cps/templates/layout.html:155 cps/templates/layout.html:286
 msgid "Uploading..."
 msgstr "正在上传..."
 
 #: cps/templates/book_edit.html:52 cps/templates/book_edit.html:292
 #: cps/templates/book_table.html:342 cps/templates/duplicates.html:766
-#: cps/templates/layout.html:152 cps/templates/layout.html:373
-#: cps/templates/layout.html:438 cps/templates/modal_dialogs.html:34
+#: cps/templates/layout.html:155 cps/templates/layout.html:376
+#: cps/templates/layout.html:441 cps/templates/modal_dialogs.html:34
 #: cps/templates/user_edit.html:573
 msgid "Close"
 msgstr "关闭"
@@ -3047,7 +3047,7 @@ msgstr "关闭"
 #: cps/templates/hardcover_review_matches.html:369
 #: cps/templates/hardcover_review_matches.html:400
 #: cps/templates/hardcover_review_matches.html:409
-#: cps/templates/layout.html:152
+#: cps/templates/layout.html:155
 msgid "Error"
 msgstr "错误"
 
@@ -5336,7 +5336,7 @@ msgstr "添加到书架"
 #: cps/templates/detail.html:590 cps/templates/detail.html:612
 #: cps/templates/detail.html:765 cps/templates/detail.html:1251
 #: cps/templates/feed.xml:83 cps/templates/feed.xml:85
-#: cps/templates/layout.html:314 cps/templates/layout.html:323
+#: cps/templates/layout.html:317 cps/templates/layout.html:326
 #: cps/templates/listenmp3.html:201 cps/templates/listenmp3.html:218
 #: cps/templates/search.html:22
 msgid "(Public)"
@@ -5755,7 +5755,7 @@ msgstr "输入域名"
 msgid "Denied Domains (Blacklist)"
 msgstr "禁止注册的域名（黑名单）"
 
-#: cps/templates/feed.xml:22 cps/templates/layout.html:357
+#: cps/templates/feed.xml:22 cps/templates/layout.html:360
 msgid "Next"
 msgstr "下一个"
 
@@ -6042,96 +6042,101 @@ msgstr "切换导航"
 msgid "Search Library"
 msgstr "搜索书库"
 
-#: cps/templates/layout.html:133 cps/templates/layout.html:170
+#: cps/templates/layout.html:133 cps/templates/layout.html:173
 #: cps/templates/user_edit.html:305 cps/templates/user_edit.html:307
 msgid "Account"
 msgstr "账号"
 
-#: cps/templates/layout.html:139 cps/templates/layout.html:172
+#: cps/templates/layout.html:139 cps/templates/layout.html:175
 msgid "Logout"
 msgstr "注销"
 
-#: cps/templates/layout.html:147
+#: cps/templates/layout.html:145
+#, fuzzy
+msgid "Bookshelf"
+msgstr "书籍"
+
+#: cps/templates/layout.html:150
 #, fuzzy
 msgid "Switch Theme"
 msgstr "标准主题"
 
-#: cps/templates/layout.html:166 cps/templates/read.html:78
+#: cps/templates/layout.html:169 cps/templates/read.html:78
 #: cps/templates/readcbr.html:70 cps/templates/readcbr.html:96
 #, fuzzy
 msgid "Settings"
 msgstr "设置"
 
-#: cps/templates/layout.html:168
+#: cps/templates/layout.html:171
 #, fuzzy
 msgid "Refresh Library"
 msgstr "搜索书库"
 
-#: cps/templates/layout.html:209
+#: cps/templates/layout.html:212
 msgid "See Changelog"
 msgstr "查看更新日志"
 
-#: cps/templates/layout.html:219
+#: cps/templates/layout.html:222
 #, fuzzy
 msgid "Open Duplicates"
 msgstr "重复书籍"
 
-#: cps/templates/layout.html:241
+#: cps/templates/layout.html:244
 msgid "Contribute here!"
 msgstr "在这里贡献！"
 
-#: cps/templates/layout.html:284
+#: cps/templates/layout.html:287
 msgid "Please do not refresh the page"
 msgstr "请不要刷新页面"
 
-#: cps/templates/layout.html:294
+#: cps/templates/layout.html:297
 msgid "Browse"
 msgstr "按条件浏览"
 
-#: cps/templates/layout.html:311 cps/templates/search_form.html:88
+#: cps/templates/layout.html:314 cps/templates/search_form.html:88
 msgid "Shelves"
 msgstr "书架列表"
 
-#: cps/templates/layout.html:317
+#: cps/templates/layout.html:320
 #, fuzzy
 msgid "Create Shelf"
 msgstr "创建书架"
 
-#: cps/templates/layout.html:321
+#: cps/templates/layout.html:324
 msgid "Magic Shelves ✨"
 msgstr ""
 
-#: cps/templates/layout.html:330 cps/templates/stats.html:3
+#: cps/templates/layout.html:333 cps/templates/stats.html:3
 msgid "About"
 msgstr "关于"
 
-#: cps/templates/layout.html:342
+#: cps/templates/layout.html:345
 msgid "Previous"
 msgstr "上一个"
 
-#: cps/templates/layout.html:369
+#: cps/templates/layout.html:372
 msgid "Book Details"
 msgstr "书籍详情"
 
-#: cps/templates/layout.html:439
+#: cps/templates/layout.html:442
 #, fuzzy
 msgid "Duplicate Books Detected"
 msgstr "删除书籍"
 
-#: cps/templates/layout.html:440
+#: cps/templates/layout.html:443
 msgid "You have unresolved duplicate books in your library"
 msgstr ""
 
-#: cps/templates/layout.html:445
+#: cps/templates/layout.html:448
 #, fuzzy
 msgid "Duplicate Groups Found"
 msgstr "无搜索结果"
 
-#: cps/templates/layout.html:453
+#: cps/templates/layout.html:456
 msgid "Remind Me Later"
 msgstr ""
 
-#: cps/templates/layout.html:456
+#: cps/templates/layout.html:459
 #, fuzzy
 msgid "View & Resolve Duplicates"
 msgstr "选择重复项"
