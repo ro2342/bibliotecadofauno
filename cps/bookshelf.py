@@ -10,7 +10,8 @@ from flask import Blueprint, render_template, request, jsonify, url_for, Respons
 # Audiobooks tracked in Audiobookshelf (github.com/advplyr/audiobookshelf) are merged
 # in read-only: matched against Calibre books by normalized title+author when possible,
 # otherwise shown as a synthetic "abs:<item_id>" card. See cps/services/audiobookshelf.py.
-from flask_login import login_required, current_user
+from .cw_login import current_user
+from .usermanagement import user_login_required as login_required
 import os
 import re
 from datetime import datetime, timezone
