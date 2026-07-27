@@ -131,6 +131,11 @@ def add_security_headers(resp):
     csp += "; img-src 'self'"
     if request.path.startswith("/author/") and config.config_use_goodreads:
         csp += " images.gr-assets.com i.gr-assets.com s.gr-assets.com"
+    if request.path.startswith("/bookshelf"):
+        # Covers/avatars carried over from a Firebase-era import (Google Books API,
+        # Google account photo) - Bookshelf never fetches arbitrary third-party
+        # images beyond these two known hosts.
+        csp += " https://books.google.com https://*.googleusercontent.com"
     if request.endpoint == "admin.hardcover_review_matches":
         csp += " https:"
     csp += " data:"

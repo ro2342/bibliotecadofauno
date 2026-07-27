@@ -418,6 +418,137 @@ def api_import():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+# One-time migration path from the original standalone Bookshelf app (Firebase/
+# Firestore), for people who used it before this project existed. Books are matched
+# to Calibre by normalized title; unmatched ones (the majority for most people, since
+# a personal reading log usually includes physical books) become "fb:<id>" virtual
+# cards, same treatment as unmatched Audiobookshelf items - everything about them
+# (status, dates, review, personal rating, cover, synopsis, shelves) lives in
+# view_settings since there's no Calibre book_id to hang a real ReadBook/BookShelf row
+# on. Firebase-only fields (rating 0-5, review, favorite, mediaType, totalPages,
+# totalTime, feelings) have no CWA equivalent regardless of match, so those always go
+# into the manual override too.
+_FIREBASE_MANUAL_FIELDS = ('rating', 'review', 'favorite', 'mediaType', 'totalPages',
+                           'totalTime', 'feelings', 'categories')
+
+
+def _clean_isbn(raw):
+    # Firestore data here was itself once imported from a Goodreads/Excel CSV export,
+    # which wraps ISBNs like ="9781444951400" to force text formatting.
+    if not raw:
+        return ''
+    return raw.replace('="', '').replace('"', '').strip()
+
+
+@bookshelf.route('/api/import_firebase', methods=['POST'])
+@login_required
+def import_firebase():
+    try:
+        req = request.get_json()
+        fb_books = req.get('books', [])
+        fb_shelves = req.get('shelves', [])
+        fb_profile = req.get('profile', {})
+
+        calibre_index = {}
+        for b in calibre_db.session.query(db.Books).all():
+            calibre_index.setdefault(_norm(b.title), b)
+
+        manual_books = _manual_books()
+        id_map = {}  # firebase book id -> our book id (int for a Calibre match, else "fb:<id>")
+        matched_count = 0
+        virtual_count = 0
+
+        for fb in fb_books:
+            fb_id = fb.get('id')
+            if not fb_id:
+                continue
+            title = fb.get('title', '')
+            match = calibre_index.get(_norm(title))
+            status = fb.get('status')
+
+            manual_fields = {k: fb[k] for k in _FIREBASE_MANUAL_FIELDS if fb.get(k) not in (None, '', [], 0)}
+            if fb.get('startDate'):
+                manual_fields['startDate'] = fb['startDate']
+            if fb.get('endDate'):
+                manual_fields['endDate'] = fb['endDate']
+            if status:
+                manual_fields['status'] = status
+
+            if match is not None:
+                key = str(match.id)
+                id_map[fb_id] = match.id
+                rb = _get_or_create_read_book(match.id)
+                if status:
+                    _apply_native_status(rb, status)
+                matched_count += 1
+            else:
+                key = 'fb:{}'.format(fb_id)
+                id_map[fb_id] = key
+                manual_fields['title'] = title
+                manual_fields['author'] = fb.get('author', '')
+                manual_fields['coverUrl'] = fb.get('coverUrl', '')
+                manual_fields['synopsis'] = fb.get('synopsis', '')
+                manual_fields['isbn'] = _clean_isbn(fb.get('isbn'))
+                manual_fields['addedAt'] = fb.get('addedAt')
+                manual_fields['source'] = 'firebase-import'
+                virtual_count += 1
+
+            entry = manual_books.get(key, {})
+            entry.update(manual_fields)
+            manual_books[key] = entry
+
+        shelf_count = 0
+        existing_shelf_by_name = {s.name: s.id for s in
+                                  ub.session.query(ub.Shelf).filter_by(user_id=current_user.id).all()}
+        for fb_shelf in fb_shelves:
+            name = fb_shelf.get('name') or 'Estante Importada'
+            if name not in existing_shelf_by_name:
+                new_shelf = ub.Shelf(name=name, user_id=current_user.id)
+                ub.session.add(new_shelf)
+                ub.session.flush()
+                existing_shelf_by_name[name] = new_shelf.id
+            shelf_id = existing_shelf_by_name[name]
+            shelf_count += 1
+
+            for fb_book_id in fb_shelf.get('bookOrder', []):
+                mapped = id_map.get(fb_book_id)
+                if mapped is None:
+                    continue
+                if isinstance(mapped, int):
+                    exists = ub.session.query(ub.BookShelf).filter_by(book_id=mapped, shelf=shelf_id).first()
+                    if not exists:
+                        ub.session.add(ub.BookShelf(book_id=mapped, shelf=shelf_id))
+                else:
+                    entry = manual_books.get(mapped, {})
+                    shelf_ids = entry.get('shelves', [])
+                    if str(shelf_id) not in shelf_ids:
+                        shelf_ids.append(str(shelf_id))
+                    entry['shelves'] = shelf_ids
+                    manual_books[mapped] = entry
+
+        current_user.set_view_property('bookshelf', 'books', manual_books)
+
+        for k in ('name', 'pronouns', 'blog', 'instagram', 'youtube', 'theme'):
+            if fb_profile.get(k):
+                current_user.set_view_property('bookshelf', k, fb_profile[k])
+        for order_key in ('lidoOrder', 'lendoOrder', 'quero-lerOrder', 'abandonadoOrder'):
+            mapped_order = [str(id_map[fid]) for fid in fb_profile.get(order_key, []) if fid in id_map]
+            if mapped_order:
+                current_user.set_view_property('bookshelf', order_key, mapped_order)
+
+        ub.session_commit()
+        return jsonify({
+            "status": "success",
+            "matched": matched_count,
+            "virtual": virtual_count,
+            "shelves": shelf_count,
+        })
+    except Exception as e:
+        ub.session.rollback()
+        log.error_or_exception(e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @bookshelf.route('/api/avatar', methods=['POST'])
 @login_required
 def upload_avatar():

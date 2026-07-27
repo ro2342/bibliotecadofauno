@@ -1041,6 +1041,11 @@ function renderSettings() {
                     <input type="file" id="csv-file-input" class="hidden" accept=".csv">
                     <button id="export-csv-btn" class="btn-expressive btn-text flex-1"><span class="material-symbols-outlined mr-2">download</span> Exportar CSV</button>
                 </div>
+                <div class="mt-4 pt-4 border-t border-neutral-800">
+                    <p class="text-sm text-neutral-400 mb-3">Backup exportado do Bookshelf antigo (Firebase) - importa uma vez só, tudo (avaliação, review, datas, estantes) é preservado.</p>
+                    <button id="import-firebase-btn" class="btn-expressive btn-text w-full"><span class="material-symbols-outlined mr-2">history</span> Importar backup do Firebase (JSON)</button>
+                    <input type="file" id="firebase-file-input" class="hidden" accept=".json">
+                </div>
             </div>
 
             <div class="card-expressive p-6">
@@ -1059,6 +1064,8 @@ function renderSettings() {
     document.getElementById('import-csv-btn').onclick = () => document.getElementById('csv-file-input').click();
     document.getElementById('csv-file-input').onchange = handleCsvImport;
     document.getElementById('export-csv-btn').onclick = handleCsvExport;
+    document.getElementById('import-firebase-btn').onclick = () => document.getElementById('firebase-file-input').click();
+    document.getElementById('firebase-file-input').onchange = handleFirebaseImport;
     document.getElementById('logout-btn').onclick = () => { window.location.href = '/logout'; };
     document.getElementById('delete-all-books-btn').onclick = () => { showModal('Confirmar Exclusão Total', 'Tem a certeza?', [{ id: 'confirm-delete-all-btn', text: 'Sim, Excluir Tudo', class: 'bg-red-600 text-white', onClick: deleteAllBooks }]); };
 }
@@ -1451,6 +1458,44 @@ function handleCsvExport() {
     link.href = URL.createObjectURL(blob);
     link.download = "a_minha_estante.csv";
     link.click();
+}
+
+function handleFirebaseImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    showLoading("Importando backup do Firebase...");
+    const reader = new FileReader();
+    reader.onload = async () => {
+        let payload;
+        try {
+            payload = JSON.parse(reader.result);
+        } catch (e) {
+            hideModal();
+            showModal("Ficheiro inválido", "Esse não parece ser um JSON válido.");
+            return;
+        }
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const response = await fetch('/bookshelf/api/import_firebase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                await loadData();
+                hideModal();
+                showModal("Importação Concluída", `${result.matched} livros casados com a sua biblioteca Calibre, ${result.virtual} adicionados como cards próprios, ${result.shelves} estantes importadas.`);
+            } else {
+                hideModal();
+                showModal("Erro na Importação", result.message || "Algo correu mal.");
+            }
+        } catch (e) {
+            hideModal();
+            showModal("Erro na Importação", `Não foi possível importar: ${e.message}`);
+        }
+    };
+    reader.readAsText(file);
 }
 
 function handleCsvImport(event) {
