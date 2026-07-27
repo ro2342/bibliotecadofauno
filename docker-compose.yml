@@ -26,6 +26,14 @@ services:
       # Get an API token from ABS under Settings > Users > (your user), or Settings > API Keys.
       - AUDIOBOOKSHELF_URL=${AUDIOBOOKSHELF_URL:-}
       - AUDIOBOOKSHELF_TOKEN=${AUDIOBOOKSHELF_TOKEN:-}
+      # Bookshelf: optional, read-only sync from the original standalone Bookshelf app's
+      # Firestore database, for people who still use it alongside this project. Needs a
+      # service account key with the "Cloud Datastore Viewer" role (read-only) - see
+      # BOOKSHELF.md - bind-mounted below and pointed at via the *_PATH var. Leave all
+      # three unset to disable.
+      - FIREBASE_LEGACY_PROJECT_ID=${FIREBASE_LEGACY_PROJECT_ID:-}
+      - FIREBASE_LEGACY_USER_ID=${FIREBASE_LEGACY_USER_ID:-}
+      - FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH=${FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH:-}
       # If your library is on a network share (e.g., NFS/SMB), disables WAL and chown to reduce locking/permission issues,
       # and switches file watching to polling (more reliable on network mounts) instead of inotify.
       # Accepts: true/false (default: false)
@@ -54,6 +62,10 @@ services:
       # If you use calibre plugins, you can bind your plugins folder here to have CWA attempt to add them to it's workflow (WIP)
       # If you are starting with a fresh install, you also need to copy customize.py.json to the Calibre config volume above, in /path/to/config/folder/.config/calibre/customize.py.json, see the README for more info
       # - /path/to/your/calibre/plugins/folder:/config/.config/calibre/plugins
+      # Firebase legacy sync (see FIREBASE_LEGACY_* above): uncomment and set FIREBASE_LEGACY_KEY_HOST_PATH
+      # in your .env to the service account JSON key file, then set FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH
+      # above to the container-side path used here.
+      # - ${FIREBASE_LEGACY_KEY_HOST_PATH}:/config/firebase-legacy-key.json:ro
     ports:
       # Same CWA_PORT override as above controls both sides here.
       - "${CWA_PORT:-8342}:${CWA_PORT:-8342}"

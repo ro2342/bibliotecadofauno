@@ -10,6 +10,13 @@ from flask import Blueprint, render_template, request, jsonify, url_for, Respons
 # Audiobooks tracked in Audiobookshelf (github.com/advplyr/audiobookshelf) are merged
 # in read-only: matched against Calibre books by normalized title+author when possible,
 # otherwise shown as a synthetic "abs:<item_id>" card. See cps/services/audiobookshelf.py.
+#
+# Books still tracked in the original standalone Bookshelf app (Firestore) are merged
+# the same way, "fb:<id>" cards, for people who keep using both. Unlike Audiobookshelf,
+# Firebase is the *only* source for personal rating/review/dates/etc, so those fields
+# are always kept in sync from there (last sync wins); only status/progress use the
+# same "only moves forward" rule as Audiobookshelf, so it never regresses what CWA's
+# own Kobo tracking already knows for a matched book. See cps/services/firebase_legacy.py.
 from .cw_login import current_user
 from .usermanagement import user_login_required as login_required
 import os
@@ -17,6 +24,7 @@ import re
 from datetime import datetime, timezone
 from . import ub, db, calibre_db, logger
 from .services import audiobookshelf
+from .services import firebase_legacy
 
 bookshelf = Blueprint('bookshelf', __name__,
                      url_prefix='/bookshelf',
@@ -76,6 +84,13 @@ def _abs_ts(ms):
 _STATUS_RANK = {'quero-ler': 0, 'abandonado': 0, 'lendo': 1, 'lido': 2}
 
 
+def _format_duration(seconds):
+    if not seconds:
+        return None
+    seconds = int(seconds)
+    return '{:02d}:{:02d}:{:02d}'.format(seconds // 3600, (seconds % 3600) // 60, seconds % 60)
+
+
 def _merge_audiobookshelf(books_data, manual_books):
     abs_items, abs_progress = audiobookshelf.fetch_snapshot()
     if not abs_items:
@@ -102,8 +117,11 @@ def _merge_audiobookshelf(books_data, manual_books):
             if prog:
                 if 'status' not in match_manual and _STATUS_RANK.get(abs_status, 0) > _STATUS_RANK.get(match['status'], 0):
                     match['status'] = abs_status
-                if 'currentProgress' not in match_manual:
-                    match['currentProgress'] = max(match['currentProgress'], prog.get('progress') or 0)
+                # Don't touch the book's own currentProgress/totalTime here - those are
+                # page-based for a matched ebook (see _format_duration docstring context
+                # above). Expose the audiobook's own progress as separate fields instead.
+                match['audiobookProgress'] = _format_duration(prog.get('currentTime'))
+                match['audiobookTotalTime'] = _format_duration(prog.get('duration'))
                 if not match.get('startDate') and prog.get('startedAt'):
                     match['startDate'] = _abs_ts(prog.get('startedAt'))
                 if not match.get('endDate') and prog.get('finishedAt'):
@@ -111,10 +129,13 @@ def _merge_audiobookshelf(books_data, manual_books):
             continue
 
         # No matching Calibre book - show as its own, Audiobookshelf-only card.
+        # currentProgress/totalTime are in seconds/"HH:MM:SS" here (not a 0-1 fraction) -
+        # that's what the mediaType == 'audiobook' progress editor in app.js expects.
         virtual_id = 'abs:{}'.format(item_id)
         manual = manual_books.get(virtual_id, {})
         status = manual.get('status', abs_status)
-        progress = manual.get('currentProgress', (prog.get('progress') if prog else 0) or 0)
+        progress = manual.get('currentProgress', (prog.get('currentTime') if prog else 0) or 0)
+        total_time = manual.get('totalTime', _format_duration(prog.get('duration')) if prog else None)
         series = meta.get('seriesName', '')
         if not series and meta.get('series'):
             series = meta['series'][0].get('name', '')
@@ -132,13 +153,76 @@ def _merge_audiobookshelf(books_data, manual_books):
             'shelves': manual.get('shelves', []),
             'categories': meta.get('genres', []) or [],
             'status': status,
+            'mediaType': 'audiobook',
             'currentProgress': progress,
+            'totalTime': total_time,
             'startDate': _abs_ts(prog.get('startedAt')) if prog else None,
             'endDate': _abs_ts(prog.get('finishedAt')) if prog else None,
             'timesStartedReading': 0,
             'source': 'audiobookshelf',
         }
-        entry.update({k: v for k, v in manual.items() if k not in ('status', 'currentProgress', 'shelves')})
+        entry.update({k: v for k, v in manual.items()
+                      if k not in ('status', 'currentProgress', 'totalTime', 'shelves')})
+        books_data.append(entry)
+
+
+# Fields the old Firebase app tracks that CWA has no equivalent for. Firebase is the
+# sole source for these (unlike Audiobookshelf's KoboReadingState, nothing else in
+# this app writes them), so every sync just overwrites them - "last sync wins".
+_FIREBASE_SYNCED_FIELDS = ('rating', 'review', 'favorite', 'mediaType', 'totalPages',
+                           'totalTime', 'feelings', 'categories', 'startDate', 'endDate')
+
+
+def _merge_firebase_legacy(books_data, manual_books, shelf_name_to_id):
+    # shelf_name_to_id: this user's real ub.Shelf rows, {name: id}. A Firebase shelf
+    # with no matching local Shelf (e.g. created there after the one-time import ran)
+    # is skipped here - get_data() is a read path and shouldn't be creating rows;
+    # re-running the one-time import picks up new shelves too.
+    fb_books, fb_shelves, _fb_profile = firebase_legacy.fetch_snapshot()
+    if not fb_books:
+        return
+
+    calibre_index = {_norm(b['title']): b for b in books_data}
+    shelf_membership = {}  # firebase book id -> set of local shelf id strings
+    for fb_shelf in fb_shelves:
+        shelf_id = shelf_name_to_id.get(fb_shelf.get('name'))
+        if shelf_id is None:
+            continue
+        for fb_book_id in fb_shelf.get('bookOrder', []):
+            shelf_membership.setdefault(fb_book_id, set()).add(str(shelf_id))
+
+    for fb in fb_books:
+        fb_id = fb.get('id')
+        title = fb.get('title', '')
+        status = fb.get('status')
+        synced = {k: fb[k] for k in _FIREBASE_SYNCED_FIELDS if fb.get(k) not in (None, '')}
+
+        match = calibre_index.get(_norm(title))
+        if match is not None:
+            match['hasFirebaseEntry'] = True
+            if status and _STATUS_RANK.get(status, 0) > _STATUS_RANK.get(match['status'], 0):
+                match['status'] = status
+            match.update(synced)
+            continue
+
+        # No matching Calibre book - same "fb:<id>" card the one-time import (if run)
+        # created. Firebase is authoritative for its own fields (always overwritten
+        # below); shelves are unioned with any local-only assignment so an in-app
+        # drag-to-shelf here never gets silently undone by the next sync.
+        virtual_id = 'fb:{}'.format(fb_id)
+        local = manual_books.get(virtual_id, {})
+        local_shelves = set(local.get('shelves', []))
+        entry = dict(synced,
+                     id=virtual_id,
+                     title=title,
+                     author=fb.get('author', ''),
+                     coverUrl=fb.get('coverUrl', ''),
+                     synopsis=fb.get('synopsis', ''),
+                     addedAt=fb.get('addedAt'),
+                     status=status or local.get('status', 'quero-ler'),
+                     currentProgress=fb.get('currentProgress', local.get('currentProgress', 0)),
+                     shelves=sorted(local_shelves | shelf_membership.get(fb_id, set())),
+                     source='firebase-legacy')
         books_data.append(entry)
 
 
@@ -222,6 +306,7 @@ def get_data():
             books_data.append(entry)
 
         _merge_audiobookshelf(books_data, manual_books)
+        _merge_firebase_legacy(books_data, manual_books, {s.name: s.id for s in user_shelves})
 
         shelves_data = [{'id': s.id, 'name': s.name, 'is_public': s.is_public} for s in user_shelves]
 
@@ -266,10 +351,10 @@ def api_save():
             if not obj_id:
                 return jsonify({"status": "error", "message": "Book creation requires Calibre"}), 501
 
-            # Audiobookshelf-only cards ("abs:<item_id>") have no Calibre book_id to hang
-            # ReadBook/BookShelf rows off of, so everything about them - status, progress,
-            # shelves - lives in view_settings instead of the DB tables.
-            is_virtual = isinstance(obj_id, str) and obj_id.startswith('abs:')
+            # Virtual cards ("abs:<id>" from Audiobookshelf, "fb:<id>" from the legacy
+            # Firebase import/sync) have no Calibre book_id to hang ReadBook/BookShelf
+            # rows off of, so everything about them lives in view_settings instead.
+            is_virtual = isinstance(obj_id, str) and (obj_id.startswith('abs:') or obj_id.startswith('fb:'))
             manual_fields = {k: v for k, v in data.items() if k != 'shelves'}
             status = manual_fields.get('status')
 
@@ -353,7 +438,7 @@ def api_delete():
         obj_id = req.get('id')
 
         if coll == 'books':
-            is_virtual = isinstance(obj_id, str) and obj_id.startswith('abs:')
+            is_virtual = isinstance(obj_id, str) and (obj_id.startswith('abs:') or obj_id.startswith('fb:'))
             key = obj_id if is_virtual else str(int(obj_id))
             if not is_virtual:
                 ub.session.query(ub.ReadBook).filter_by(user_id=current_user.id, book_id=int(obj_id)).delete()

@@ -54,6 +54,46 @@ puxar o progresso de lá também — configure `AUDIOBOOKSHELF_URL` e `AUDIOBOOK
 - Capas dos audiobooks são servidas via `/bookshelf/api/abs-cover/<item_id>`, um proxy que busca a imagem
   no ABS no servidor (nunca expõe o token da API no navegador, e funciona mesmo se o ABS só for acessível
   de dentro da rede do container).
+- Cards que só existem no ABS vêm com `mediaType: 'audiobook'` e `totalTime` já formatado (`HH:MM:SS`),
+  e `currentProgress` em **segundos** (não fração 0-1) — é isso que o editor de progresso do app.js espera
+  pra esse tipo de mídia. Pra livros casados com um ebook do Calibre, isso fica em campos à parte
+  (`audiobookProgress`/`audiobookTotalTime`) pra não mexer no progresso de leitura por página que já vem
+  do Kobo.
+
+## Login com Google
+
+O CWA já tem suporte nativo a login via Google (`cps/oauth_bb.py`, usa `flask-dance`) — não precisa de
+nada novo neste fork. Pra ativar: crie um OAuth Client ID em
+[console.developers.google.com](https://console.developers.google.com/apis/credentials), configure em
+**Admin → Configurações Básicas → Login/Registo** dentro do próprio calibre-web-automated, e depois
+vincule sua conta em **Perfil → Ligações Externas**. Isso autentica no calibre-web (e por extensão no
+Bookshelf, que usa a mesma sessão) — não sincroniza dados, é só um método de login.
+
+## Sync com o Bookshelf original (Firebase, opcional)
+
+Se você ainda usa o [app original do Bookshelf](https://github.com/ro2342/bookshelf) (Firestore) no
+dia a dia, o Bookshelf pode manter isso sincronizado — configure `FIREBASE_LEGACY_PROJECT_ID`,
+`FIREBASE_LEGACY_USER_ID` e `FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH` (ver `docker-compose.yml`/`.env.example`).
+Sem essas variáveis, o recurso fica desligado.
+
+- **Só leitura**, igual ao Audiobookshelf: nunca escreve de volta no Firestore.
+- Fala direto com a **API REST do Firestore** usando um fluxo de autenticação JWT feito à mão
+  (`cps/services/firebase_legacy.py`) em vez do SDK `firebase-admin`, que traria uma dependência pesada
+  (grpcio, google-cloud-firestore) pra imagem — só usa `requests` e `cryptography`, que o CWA já tem.
+- **Segurança da chave**: use uma conta de serviço com o papel **Cloud Datastore Viewer** (só leitura),
+  nunca Editor/Owner — mesmo que a chave vaze, não dá pra apagar ou alterar nada no seu Firestore.
+- **Diferente do Audiobookshelf**: lá o CWA já tem uma fonte própria de progresso (Kobo), então o merge só
+  empurra status/progresso pra frente. Aqui, o Firebase é a **única** fonte pra avaliação pessoal, review,
+  datas, "favorito", tipo de mídia etc — esses campos são sempre sobrescritos pelo valor mais recente do
+  Firestore a cada sync (60s de cache). Se você editar um desses campos direto no Bookshelf novo pra um
+  livro que também existe no Firebase, a próxima sincronização vai substituir pelo valor de lá.
+- **Casamento com o Calibre**: por título normalizado (não usa autor — o formato do nome no Firebase,
+  "Fulano de Tal", geralmente não bate com o `author_sort` do Calibre, "de Tal, Fulano").
+- Livro sem match vira card `fb:<id>`, o mesmo esquema de ID usado pela importação única (`/api/import_firebase`)
+  — então rodar as duas (importar uma vez e depois ligar o sync) não duplica nada, o sync só mantém os
+  mesmos cards atualizados.
+- Estantes são casadas por **nome** contra as suas estantes reais no CWA; uma estante nova criada no
+  Firebase depois da importação inicial não aparece sozinha aqui (rode a importação de novo pra pegá-la).
 
 ## Limitações conhecidas
 
