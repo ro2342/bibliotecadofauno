@@ -113,10 +113,19 @@ _start_time = time.time()
 def add_security_headers(resp):
     default_src = ([host.strip() for host in config.config_trustedhosts.split(',') if host] +
                    ["'self'", "'unsafe-inline'", "'unsafe-eval'"])
+    # Bookshelf's SPA pulls Tailwind/fonts/a couple of small libs from CDNs instead of
+    # vendoring them - widen CSP only for its own routes so the rest of the app (and its
+    # default same-origin-only policy) is untouched.
+    if request.path.startswith("/bookshelf"):
+        default_src += ["https://cdn.tailwindcss.com", "https://fonts.googleapis.com",
+                         "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com",
+                         "https://unpkg.com"]
     csp = "default-src " + ' '.join(default_src)
     if request.endpoint == "web.read_book" and config.config_use_google_drive:
         csp +=" blob: "
     csp += "; font-src 'self' data:"
+    if request.path.startswith("/bookshelf"):
+        csp += " https://fonts.gstatic.com"
     if request.endpoint == "web.read_book":
         csp += " blob: "
     csp += "; img-src 'self'"
