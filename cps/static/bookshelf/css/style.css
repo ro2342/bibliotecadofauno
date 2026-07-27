@@ -14,24 +14,36 @@
 }
 
 body {
-    font-family: 'Lato', 'Manrope', sans-serif;
+    font-family: 'Manrope', sans-serif;
     background-color: hsl(var(--md-sys-color-surface));
-    background-image: url('../images/paper-fibers.png');
-    background-repeat: repeat;
     color: hsl(var(--md-sys-color-on-surface));
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @font-face {
     font-family: 'Roboto Flex';
-    src: local('Roboto Flex'), 
+    src: local('Roboto Flex'),
          url('robotoflex.ttf') format('truetype');
     font-style: normal;
 }
 
 .font-display {
-    font-family: "EB Garamond", serif;
+    font-family: "Roboto Flex", sans-serif;
+    font-optical-sizing: auto;
     font-weight: 800;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0,
+        "wdth" 100,
+        "GRAD" 0,
+        "XOPQ" 96,
+        "XTRA" 468,
+        "YOPQ" 79,
+        "YTAS" 750,
+        "YTDE" -203,
+        "YTFI" 738,
+        "YTLC" 514,
+        "YTUC" 712;
 }
 
 .title-text-shadow {

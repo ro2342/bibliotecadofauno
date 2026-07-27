@@ -227,7 +227,7 @@ def get_data():
 
         profile_ns = _bookshelf_ns()
         user_settings = {
-            'theme': profile_ns.get('theme', 'fauno'),
+            'theme': profile_ns.get('theme', 'dark'),
             'avatarUrl': profile_ns.get('avatar'),
             'name': current_user.name,
             'pronouns': profile_ns.get('pronouns', ''),

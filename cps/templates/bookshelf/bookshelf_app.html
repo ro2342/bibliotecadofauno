@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Biblioteca do Fauno - Estante</title>
+    <title>Book Tracker Pessoal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Folha de Estilos -->
@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Roboto+Flex:opsz,wght@8..144,1000&family=EB+Garamond:wght@400;700;800&family=Lato:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Roboto+Flex:opsz,wght@8..144,1000&display=swap"
       rel="stylesheet"
     />
     <link
@@ -31,8 +31,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- ADICIONADO: Biblioteca para 'arrastar e soltar' (Drag and Drop) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <!-- Estética Biblioteca do Fauno -->
-    <script src="{{ url_for('static', filename='js/lib_do_fauno.js') }}"></script>
   </head>
 
   <body class="bg-[hsl(var(--md-sys-color-surface))]">

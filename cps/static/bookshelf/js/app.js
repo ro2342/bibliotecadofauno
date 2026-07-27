@@ -28,7 +28,6 @@ const sentimentos = [
 
 // --- SISTEMA DE TEMAS ---
 const themes = {
-    'fauno': { name: 'Biblioteca do Fauno', values: { primary: '68 60% 35%', onPrimary: '40 25% 98%', primaryContainer: '68 40% 25%', onPrimaryContainer: '40 25% 95%', surface: '40 25% 90%', onSurface: '25 25% 15%', surfaceContainerHigh: '40 20% 85%', onSurfaceVariant: '25 15% 30%', outline: '25 10% 50%' } },
     'dark': { name: 'Padrão Escuro', values: { primary: '190 80% 60%', onPrimary: '210 30% 10%', primaryContainer: '190 70% 30%', onPrimaryContainer: '190 80% 90%', surface: '220 15% 12%', onSurface: '220 10% 90%', surfaceContainerHigh: '220 15% 18%', onSurfaceVariant: '220 10% 70%', outline: '220 10% 40%' } },
     'sunset': { name: 'Sunset', values: { primary: '15 90% 60%', onPrimary: '15 90% 10%', primaryContainer: '15 80% 85%', onPrimaryContainer: '15 90% 20%', surface: '30 30% 15%', onSurface: '30 20% 95%', surfaceContainerHigh: '30 25% 20%', onSurfaceVariant: '30 15% 70%', outline: '30 10% 45%' } },
     'forest': { name: 'Forest', values: { primary: '140 60% 50%', onPrimary: '140 60% 95%', primaryContainer: '140 40% 25%', onPrimaryContainer: '140 50% 85%', surface: '120 10% 10%', onSurface: '120 15% 90%', surfaceContainerHigh: '120 10% 15%', onSurfaceVariant: '120 10% 60%', outline: '120 5% 35%' } },
@@ -80,7 +79,7 @@ function initTheme() {
     if (savedTheme && themes[savedTheme]) {
         applyTheme(savedTheme, false);
     } else {
-        applyTheme('fauno', false);
+        applyTheme('dark', false);
     }
 }
 
