@@ -34,6 +34,17 @@ services:
       - FIREBASE_LEGACY_PROJECT_ID=${FIREBASE_LEGACY_PROJECT_ID:-}
       - FIREBASE_LEGACY_USER_ID=${FIREBASE_LEGACY_USER_ID:-}
       - FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH=${FIREBASE_LEGACY_SERVICE_ACCOUNT_PATH:-}
+      # Bookshelf: optional, read-only token-authenticated export API (GET /bookshelf/api/export)
+      # for the standalone ro2342/bookshelf (static site) to pull THIS instance's data into itself.
+      # Leave BOOKSHELF_EXPORT_TOKEN unset to disable the endpoint entirely (it 404s).
+      # - BOOKSHELF_EXPORT_TOKEN: generate a long random value yourself, e.g. `openssl rand -hex 32`.
+      # - BOOKSHELF_EXPORT_USERNAME: which CWA account gets exported (this is single-user by design).
+      # - BOOKSHELF_EXPORT_ALLOWED_ORIGIN: exact origin of your GitHub Pages site, e.g.
+      #   https://ro2342.github.io (no trailing slash/path) - needed for the browser to allow the
+      #   cross-origin fetch at all.
+      - BOOKSHELF_EXPORT_TOKEN=${BOOKSHELF_EXPORT_TOKEN:-}
+      - BOOKSHELF_EXPORT_USERNAME=${BOOKSHELF_EXPORT_USERNAME:-}
+      - BOOKSHELF_EXPORT_ALLOWED_ORIGIN=${BOOKSHELF_EXPORT_ALLOWED_ORIGIN:-}
       # If your library is on a network share (e.g., NFS/SMB), disables WAL and chown to reduce locking/permission issues,
       # and switches file watching to polling (more reliable on network mounts) instead of inotify.
       # Accepts: true/false (default: false)

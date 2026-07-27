@@ -95,6 +95,34 @@ Sem essas variáveis, o recurso fica desligado.
 - Estantes são casadas por **nome** contra as suas estantes reais no CWA; uma estante nova criada no
   Firebase depois da importação inicial não aparece sozinha aqui (rode a importação de novo pra pegá-la).
 
+## Exportando para o Bookshelf standalone (ro2342/bookshelf)
+
+O plano é o inverso do resto deste documento: em vez do CWA puxar de fora, é o
+[`ro2342/bookshelf`](https://github.com/ro2342/bookshelf) (site estático, Firebase + login Google, hospedado
+no GitHub Pages) que passa a puxar **deste** CWA — pra continuar sendo a "conta central", só que agora com
+dados automáticos de leitura/audiobook também. Isso usa `GET /bookshelf/api/export`, autenticado por token
+(não por sessão/cookie — um site de outra origem não consegue usar cookie daqui), com CORS liberado só pra
+origem configurada.
+
+Variáveis (ver `docker-compose.yml`/`.env.example`): `BOOKSHELF_EXPORT_TOKEN` (gere com
+`openssl rand -hex 32`), `BOOKSHELF_EXPORT_USERNAME` (qual conta do CWA é exportada — é single-user por
+natureza, não tem conceito de "qual usuário" além do token), `BOOKSHELF_EXPORT_ALLOWED_ORIGIN` (origem exata
+do site, ex: `https://ro2342.github.io`, sem barra no final). Sem `BOOKSHELF_EXPORT_TOKEN`, o endpoint
+retorna 404 — desligado por padrão.
+
+Mecanismo técnico: `current_user` dentro do CWA normalmente vem da sessão via cookie, mas o próprio CWA já
+tem um caminho alternativo pra isso (usado pelo OPDS com HTTP Basic Auth): setar `g.flask_httpauth_user`
+antes de chamar a view faz `current_user` resolver pra esse usuário sem precisar de cookie nenhum
+(`cps/cw_login/utils.py:_get_user`). O endpoint de export usa exatamente esse mecanismo, reaproveitando 100%
+da lógica de `/api/data` (`_build_bookshelf_payload()`, compartilhada entre as duas rotas).
+
+**Só leitura** — o CWA nunca é alterado por essa via, só lido.
+
+Pro Audiobookshelf também aparecer automaticamente no `ro2342/bookshelf`: como o ABS só está na rede local
+(sem túnel público), a sincronização direta do navegador com ele só funciona quando o dispositivo estiver
+na mesma rede/VPN de casa. Adicione a origem do GitHub Pages em **Configurações → allowedOrigins** no
+próprio Audiobookshelf (não use `ALLOW_CORS=1` — libera geral, menos seguro que a lista específica).
+
 ## Limitações conhecidas
 
 - `ReadBook` do CWA não tem uma coluna de "data de término" dedicada — a Bookshelf aproxima usando

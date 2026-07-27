@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, url_for, Response, abort
+from flask import Blueprint, render_template, request, jsonify, url_for, Response, abort, g
 # Bookshelf Integration - ported onto calibre-web-automated.
 # Reading status/progress is read from and written back to CWA's own tables
 # (ReadBook, KoboReadingState/KoboBookmark) so Kobo/KOReader sync and the
@@ -19,6 +19,7 @@ from flask import Blueprint, render_template, request, jsonify, url_for, Respons
 # own Kobo tracking already knows for a matched book. See cps/services/firebase_legacy.py.
 from .cw_login import current_user
 from .usermanagement import user_login_required as login_required
+import hmac
 import os
 import re
 from datetime import datetime, timezone
@@ -243,99 +244,156 @@ def abs_cover(item_id):
     return Response(content, mimetype=content_type)
 
 
+def _build_bookshelf_payload():
+    # Shared by /api/data (session-authenticated) and /api/export (token-authenticated,
+    # for the standalone ro2342/bookshelf static site to pull from) - both resolve
+    # `current_user` the same way (see g.flask_httpauth_user in api_export), so this
+    # needs no explicit user parameter.
+    entries = calibre_db.session.query(db.Books).filter(
+        calibre_db.common_filters(allow_show_archived=True)
+    ).all()
+
+    user_shelves = ub.session.query(ub.Shelf).filter(ub.Shelf.user_id == int(current_user.id)).all()
+    user_shelf_ids = [s.id for s in user_shelves]
+    book_shelf_mappings = ub.session.query(ub.BookShelf).filter(
+        ub.BookShelf.shelf.in_(user_shelf_ids)).all() if user_shelf_ids else []
+    book_shelves_map = {}
+    for m in book_shelf_mappings:
+        book_shelves_map.setdefault(m.book_id, []).append(str(m.shelf))
+
+    read_entries = {rb.book_id: rb for rb in ub.session.query(ub.ReadBook).filter(
+        ub.ReadBook.user_id == int(current_user.id)).all()}
+
+    kobo_states = {ks.book_id: ks for ks in ub.session.query(ub.KoboReadingState).filter(
+        ub.KoboReadingState.user_id == int(current_user.id)).all()}
+
+    manual_books = _manual_books()
+
+    books_data = []
+    for book in entries:
+        rb = read_entries.get(book.id)
+        manual = manual_books.get(str(book.id), {})
+
+        auto_status = STATUS_MAP.get(rb.read_status, 'quero-ler') if rb else 'quero-ler'
+        status = manual.get('status', auto_status)
+
+        progress = 0.0
+        ks = kobo_states.get(book.id)
+        if ks is not None and ks.current_bookmark is not None and ks.current_bookmark.progress_percent is not None:
+            progress = ks.current_bookmark.progress_percent
+        if status == 'lido':
+            progress = 1.0
+        progress = manual.get('currentProgress', progress)
+
+        entry = {
+            'id': book.id,
+            'title': book.title,
+            'author': book.author_sort,
+            'coverUrl': url_for('web.get_cover', book_id=book.id),
+            'synopsis': book.comments[0].text if book.comments else "",
+            'addedAt': book.timestamp.isoformat() if book.timestamp else None,
+            'series': book.series[0].name if book.series else "",
+            'series_index': book.series_index,
+            'rating': int(book.ratings[0].rating / 2) if book.ratings else 0,  # Calibre is 0-10
+            'shelves': book_shelves_map.get(book.id, []),
+            'categories': [t.name for t in book.tags] if book.tags else [],
+            'status': status,
+            'currentProgress': progress,
+            'startDate': rb.last_time_started_reading.isoformat() if rb and rb.last_time_started_reading else None,
+            'endDate': rb.last_modified.isoformat() if rb and rb.read_status == ub.ReadBook.STATUS_FINISHED else None,
+            'timesStartedReading': rb.times_started_reading if rb else 0,
+        }
+        # Manual overrides (dates, notes, review, bookType, personal rating, "abandonado", ...)
+        entry.update({k: v for k, v in manual.items() if k not in ('status', 'currentProgress')})
+        books_data.append(entry)
+
+    _merge_audiobookshelf(books_data, manual_books)
+    _merge_firebase_legacy(books_data, manual_books, {s.name: s.id for s in user_shelves})
+
+    shelves_data = [{'id': s.id, 'name': s.name, 'is_public': s.is_public} for s in user_shelves]
+
+    profile_ns = _bookshelf_ns()
+    user_settings = {
+        'theme': profile_ns.get('theme', 'dark'),
+        'avatarUrl': profile_ns.get('avatar'),
+        'name': current_user.name,
+        'pronouns': profile_ns.get('pronouns', ''),
+        'blog': profile_ns.get('blog', ''),
+        'instagram': profile_ns.get('instagram', ''),
+        'youtube': profile_ns.get('youtube', ''),
+        'lidoOrder': profile_ns.get('lidoOrder', []),
+        'lendoOrder': profile_ns.get('lendoOrder', []),
+        'quero-lerOrder': profile_ns.get('quero-lerOrder', []),
+        'abandonadoOrder': profile_ns.get('abandonadoOrder', []),
+    }
+
+    return {
+        "status": "success",
+        "data": {
+            "books": books_data,
+            "shelves": shelves_data,
+            "profile": user_settings
+        }
+    }
+
+
 @bookshelf.route('/api/data')
 @login_required
 def get_data():
     try:
-        entries = calibre_db.session.query(db.Books).filter(
-            calibre_db.common_filters(allow_show_archived=True)
-        ).all()
-
-        user_shelves = ub.session.query(ub.Shelf).filter(ub.Shelf.user_id == int(current_user.id)).all()
-        user_shelf_ids = [s.id for s in user_shelves]
-        book_shelf_mappings = ub.session.query(ub.BookShelf).filter(
-            ub.BookShelf.shelf.in_(user_shelf_ids)).all() if user_shelf_ids else []
-        book_shelves_map = {}
-        for m in book_shelf_mappings:
-            book_shelves_map.setdefault(m.book_id, []).append(str(m.shelf))
-
-        read_entries = {rb.book_id: rb for rb in ub.session.query(ub.ReadBook).filter(
-            ub.ReadBook.user_id == int(current_user.id)).all()}
-
-        kobo_states = {ks.book_id: ks for ks in ub.session.query(ub.KoboReadingState).filter(
-            ub.KoboReadingState.user_id == int(current_user.id)).all()}
-
-        manual_books = _manual_books()
-
-        books_data = []
-        for book in entries:
-            rb = read_entries.get(book.id)
-            manual = manual_books.get(str(book.id), {})
-
-            auto_status = STATUS_MAP.get(rb.read_status, 'quero-ler') if rb else 'quero-ler'
-            status = manual.get('status', auto_status)
-
-            progress = 0.0
-            ks = kobo_states.get(book.id)
-            if ks is not None and ks.current_bookmark is not None and ks.current_bookmark.progress_percent is not None:
-                progress = ks.current_bookmark.progress_percent
-            if status == 'lido':
-                progress = 1.0
-            progress = manual.get('currentProgress', progress)
-
-            entry = {
-                'id': book.id,
-                'title': book.title,
-                'author': book.author_sort,
-                'coverUrl': url_for('web.get_cover', book_id=book.id),
-                'synopsis': book.comments[0].text if book.comments else "",
-                'addedAt': book.timestamp.isoformat() if book.timestamp else None,
-                'series': book.series[0].name if book.series else "",
-                'series_index': book.series_index,
-                'rating': int(book.ratings[0].rating / 2) if book.ratings else 0,  # Calibre is 0-10
-                'shelves': book_shelves_map.get(book.id, []),
-                'categories': [t.name for t in book.tags] if book.tags else [],
-                'status': status,
-                'currentProgress': progress,
-                'startDate': rb.last_time_started_reading.isoformat() if rb and rb.last_time_started_reading else None,
-                'endDate': rb.last_modified.isoformat() if rb and rb.read_status == ub.ReadBook.STATUS_FINISHED else None,
-                'timesStartedReading': rb.times_started_reading if rb else 0,
-            }
-            # Manual overrides (dates, notes, review, bookType, personal rating, "abandonado", ...)
-            entry.update({k: v for k, v in manual.items() if k not in ('status', 'currentProgress')})
-            books_data.append(entry)
-
-        _merge_audiobookshelf(books_data, manual_books)
-        _merge_firebase_legacy(books_data, manual_books, {s.name: s.id for s in user_shelves})
-
-        shelves_data = [{'id': s.id, 'name': s.name, 'is_public': s.is_public} for s in user_shelves]
-
-        profile_ns = _bookshelf_ns()
-        user_settings = {
-            'theme': profile_ns.get('theme', 'dark'),
-            'avatarUrl': profile_ns.get('avatar'),
-            'name': current_user.name,
-            'pronouns': profile_ns.get('pronouns', ''),
-            'blog': profile_ns.get('blog', ''),
-            'instagram': profile_ns.get('instagram', ''),
-            'youtube': profile_ns.get('youtube', ''),
-            'lidoOrder': profile_ns.get('lidoOrder', []),
-            'lendoOrder': profile_ns.get('lendoOrder', []),
-            'quero-lerOrder': profile_ns.get('quero-lerOrder', []),
-            'abandonadoOrder': profile_ns.get('abandonadoOrder', []),
-        }
-
-        return jsonify({
-            "status": "success",
-            "data": {
-                "books": books_data,
-                "shelves": shelves_data,
-                "profile": user_settings
-            }
-        })
+        return jsonify(_build_bookshelf_payload())
     except Exception as e:
         log.error_or_exception(e)
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+def _export_config():
+    return {
+        'token': os.environ.get('BOOKSHELF_EXPORT_TOKEN', ''),
+        'username': os.environ.get('BOOKSHELF_EXPORT_USERNAME', ''),
+        'origin': os.environ.get('BOOKSHELF_EXPORT_ALLOWED_ORIGIN', ''),
+    }
+
+
+def _apply_export_cors(resp, origin):
+    if origin:
+        resp.headers['Access-Control-Allow-Origin'] = origin
+        resp.headers['Vary'] = 'Origin'
+        resp.headers['Access-Control-Allow-Headers'] = 'X-Bookshelf-Token'
+        resp.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    return resp
+
+
+@bookshelf.route('/api/export', methods=['GET', 'OPTIONS'])
+def api_export():
+    # Read-only, token-authenticated (not session-based - a cross-origin static site
+    # can't rely on cookies), for the standalone ro2342/bookshelf app to pull this
+    # CWA instance's data into itself. Single-user by design: BOOKSHELF_EXPORT_USERNAME
+    # picks which CWA account is exported; there's no per-caller identity beyond the
+    # shared token, matching the personal/single-tenant nature of a home CWA instance.
+    cfg = _export_config()
+    if request.method == 'OPTIONS':
+        return _apply_export_cors(Response(status=204), cfg['origin'])
+
+    if not cfg['token']:
+        return _apply_export_cors(jsonify({"status": "error", "message": "export disabled"}), cfg['origin']), 404
+
+    provided = request.headers.get('X-Bookshelf-Token', '')
+    if not hmac.compare_digest(provided, cfg['token']):
+        return _apply_export_cors(jsonify({"status": "error", "message": "invalid token"}), cfg['origin']), 401
+
+    user = ub.session.query(ub.User).filter_by(name=cfg['username']).first()
+    if not user:
+        log.error("BOOKSHELF_EXPORT_USERNAME '{}' not found".format(cfg['username']))
+        return _apply_export_cors(jsonify({"status": "error", "message": "server misconfigured"}), cfg['origin']), 500
+
+    g.flask_httpauth_user = user
+    try:
+        resp = jsonify(_build_bookshelf_payload())
+    except Exception as e:
+        log.error_or_exception(e)
+        resp = jsonify({"status": "error", "message": str(e)})
+    return _apply_export_cors(resp, cfg['origin'])
 
 
 @bookshelf.route('/api/save', methods=['POST'])
