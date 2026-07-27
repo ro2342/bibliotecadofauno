@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version:  Calibre-Web Automated\n"
 "Report-Msgid-Bugs-To: https://github.com/crocodilestick/Calibre-Web-"
 "Automated\n"
-"POT-Creation-Date: 2026-07-26 16:47+0000\n"
+"POT-Creation-Date: 2026-07-27 19:27+0000\n"
 "PO-Revision-Date: 2025-06-07 14:44+0300\n"
 "Last-Translator: UsamaFoad <usamafoad@gmail.com>\n"
 "Language-Team: \n"
@@ -122,7 +122,7 @@ msgid "UI Configuration"
 msgstr "إعدادات واجهة المستخدم"
 
 #: cps/admin.py:620 cps/admin.py:1302 cps/db.py:967 cps/search.py:153
-#: cps/web.py:832
+#: cps/web.py:841
 #, python-format
 msgid "Custom Column No.%(column)d does not exist in calibre database"
 msgstr "لا يوجد عمود مخصص رقم %(column)d في قاعدة بيانات Calibre"
@@ -389,7 +389,7 @@ msgstr "تم التحقق بنجاح! تم التحقق من حساب Gmail."
 #: cps/admin.py:2558 cps/admin.py:2829 cps/editbooks.py:1046
 #: cps/editbooks.py:1830 cps/shelf.py:93 cps/shelf.py:167 cps/shelf.py:228
 #: cps/shelf.py:278 cps/shelf.py:315 cps/shelf.py:389 cps/shelf.py:511
-#: cps/tasks/convert.py:145 cps/web.py:2678
+#: cps/tasks/convert.py:145 cps/web.py:2687
 #, python-format
 msgid "Oops! Database Error: %(error)s."
 msgstr "عفواً! خطأ في قاعدة البيانات: %(error)s."
@@ -431,7 +431,7 @@ msgstr "مدة غير صالحة للمهمة المحددة"
 msgid "Scheduled tasks settings updated"
 msgstr "تم تحديث إعدادات المهام المجدولة"
 
-#: cps/admin.py:1820 cps/admin.py:1964 cps/admin.py:2825 cps/web.py:2109
+#: cps/admin.py:1820 cps/admin.py:1964 cps/admin.py:2825 cps/web.py:2118
 msgid "Oops! An unknown error occurred. Please try again later."
 msgstr "عفواً! حدث خطأ غير معروف. يُرجى المحاولة لاحقًا."
 
@@ -439,7 +439,7 @@ msgstr "عفواً! حدث خطأ غير معروف. يُرجى المحاولة
 msgid "Settings DB is not Writeable"
 msgstr "قاعدة بيانات الإعدادات غير قابلة للكتابة"
 
-#: cps/admin.py:1843 cps/opds.py:199 cps/web.py:2604 cps/web.py:2729
+#: cps/admin.py:1843 cps/opds.py:199 cps/web.py:2613 cps/web.py:2738
 #, fuzzy
 msgid "title"
 msgstr "العنوان"
@@ -601,7 +601,7 @@ msgstr "تم تحديث إعدادات قاعدة البيانات"
 msgid "Database Configuration"
 msgstr "تكوين قاعدة البيانات"
 
-#: cps/admin.py:2514 cps/web.py:2078
+#: cps/admin.py:2514 cps/web.py:2087
 msgid "Oops! Please complete all fields."
 msgstr "عفواً! الرجاء تعبئة جميع الحقول."
 
@@ -635,7 +635,7 @@ msgstr "لا يمكن حذف المستخدم الضيف"
 msgid "No admin user remaining, can't delete user"
 msgstr "لم يتبق مستخدم مسؤول، لا يمكن حذف المستخدم"
 
-#: cps/admin.py:2780 cps/web.py:2413
+#: cps/admin.py:2780 cps/web.py:2422
 msgid "Email can't be empty and has to be a valid Email"
 msgstr ""
 "لا يمكن أن يكون البريد الإلكتروني فارغًا ويجب أن يكون بريدًا إلكترونيًا صالحًا"
@@ -1106,9 +1106,9 @@ msgstr ""
 #: cps/db.py:1252 cps/templates/config_edit.html:294
 #: cps/templates/config_view_edit.html:79
 #: cps/templates/config_view_edit.html:90 cps/templates/email_edit.html:41
-#: cps/web.py:645 cps/web.py:679 cps/web.py:724 cps/web.py:764 cps/web.py:793
-#: cps/web.py:1599 cps/web.py:1636 cps/web.py:1687 cps/web.py:1719
-#: cps/web.py:1758
+#: cps/web.py:654 cps/web.py:688 cps/web.py:733 cps/web.py:773 cps/web.py:802
+#: cps/web.py:1608 cps/web.py:1645 cps/web.py:1696 cps/web.py:1728
+#: cps/web.py:1767
 msgid "None"
 msgstr "غير موجود"
 
@@ -1209,8 +1209,8 @@ msgstr "لا يُسمح بتحميل ملحق الملف '%(ext)s' إلى هذا
 msgid "File to be uploaded must have an extension"
 msgstr "يجب أن يكون للملف المراد تحميله امتداد"
 
-#: cps/editbooks.py:845 cps/editbooks.py:1453 cps/web.py:612 cps/web.py:2790
-#: cps/web.py:2881 cps/web.py:2966
+#: cps/editbooks.py:845 cps/editbooks.py:1453 cps/web.py:621 cps/web.py:2799
+#: cps/web.py:2890 cps/web.py:2975
 msgid ""
 "Oops! Selected book is unavailable. File does not exist or is not accessible"
 msgstr "عفواً! الكتاب المحدد غير متوفر. الملف غير موجود أو غير قابل للوصول"
@@ -1712,7 +1712,7 @@ msgstr "{} نجوم"
 
 #: cps/remotelogin.py:76 cps/templates/layout.html:135
 #: cps/templates/layout.html:180 cps/templates/login.html:11
-#: cps/templates/login.html:39 cps/web.py:2187
+#: cps/templates/login.html:39 cps/web.py:2196
 msgid "Login"
 msgstr "تسجيل الدخول"
 
@@ -1759,7 +1759,7 @@ msgstr "الكتب المحملة"
 msgid "Show Downloaded Books"
 msgstr "عرض الكتب المحملة"
 
-#: cps/render_template.py:91 cps/web.py:502
+#: cps/render_template.py:91 cps/web.py:511
 msgid "Top Rated Books"
 msgstr "الكتب الأعلى تقييمًا"
 
@@ -1767,7 +1767,7 @@ msgstr "الكتب الأعلى تقييمًا"
 msgid "Show Top Rated Books"
 msgstr "عرض الكتب الأعلى تقييمًا"
 
-#: cps/render_template.py:94 cps/web.py:851
+#: cps/render_template.py:94 cps/web.py:860
 msgid "Read Books"
 msgstr "الكتب المقروءة"
 
@@ -1775,7 +1775,7 @@ msgstr "الكتب المقروءة"
 msgid "Show Read and Unread"
 msgstr "عرض المقروء وغير المقروء"
 
-#: cps/render_template.py:98 cps/web.py:854
+#: cps/render_template.py:98 cps/web.py:863
 msgid "Unread Books"
 msgstr "الكتب غير المقروءة"
 
@@ -1792,7 +1792,7 @@ msgstr "اكتشف"
 msgid "Show Random Books"
 msgstr "عرض الكتب العشوائية"
 
-#: cps/render_template.py:104 cps/templates/book_table.html:106 cps/web.py:1762
+#: cps/render_template.py:104 cps/templates/book_table.html:106 cps/web.py:1771
 msgid "Categories"
 msgstr "الفئات"
 
@@ -1804,7 +1804,7 @@ msgstr "عرض قسم الفئات"
 #: cps/templates/book_table.html:107 cps/templates/cwa_settings.html:362
 #: cps/templates/cwa_settings.html:364 cps/templates/cwa_settings.html:1103
 #: cps/templates/hardcover_review_matches.html:140
-#: cps/templates/search_form.html:70 cps/web.py:1642 cps/web.py:1654
+#: cps/templates/search_form.html:70 cps/web.py:1651 cps/web.py:1663
 msgid "Series"
 msgstr "السلاسل"
 
@@ -1822,7 +1822,7 @@ msgstr "المؤلفون"
 msgid "Show Author Section"
 msgstr "عرض قسم المؤلفين"
 
-#: cps/render_template.py:114 cps/templates/book_table.html:111 cps/web.py:1610
+#: cps/render_template.py:114 cps/templates/book_table.html:111 cps/web.py:1619
 msgid "Publishers"
 msgstr "الناشرون"
 
@@ -1832,7 +1832,7 @@ msgstr "عرض قسم الناشرين"
 
 #: cps/render_template.py:117 cps/templates/book_table.html:109
 #: cps/templates/detail.html:706 cps/templates/search_form.html:108
-#: cps/web.py:1734
+#: cps/web.py:1743
 msgid "Languages"
 msgstr "اللغات"
 
@@ -1840,7 +1840,7 @@ msgstr "اللغات"
 msgid "Show Language Section"
 msgstr "عرض قسم اللغات"
 
-#: cps/render_template.py:121 cps/web.py:1694
+#: cps/render_template.py:121 cps/web.py:1703
 msgid "Ratings"
 msgstr "التقييمات"
 
@@ -1856,7 +1856,7 @@ msgstr "تنسيقات الملفات"
 msgid "Show File Formats Section"
 msgstr "عرض قسم تنسيقات الملفات"
 
-#: cps/render_template.py:128 cps/web.py:877
+#: cps/render_template.py:128 cps/web.py:886
 msgid "Archived Books"
 msgstr "الكتب المؤرشفة"
 
@@ -1864,7 +1864,7 @@ msgstr "الكتب المؤرشفة"
 msgid "Show Archived Books"
 msgstr "عرض الكتب المؤرشفة"
 
-#: cps/render_template.py:133 cps/web.py:1430
+#: cps/render_template.py:133 cps/web.py:1439
 msgid "Books List"
 msgstr "قائمة الكتب"
 
@@ -2104,299 +2104,299 @@ msgstr "يتوفر تحديث جديد. انقر على الزر أدناه لل
 msgid "No release information available"
 msgstr "لا توجد معلومات إصدار متاحة"
 
-#: cps/templates/index.html:48 cps/web.py:514
+#: cps/templates/index.html:48 cps/web.py:523
 msgid "Discover (Random Books)"
 msgstr "اكتشف (كتب عشوائية)"
 
-#: cps/web.py:564
+#: cps/web.py:573
 msgid "Hot Books (Most Downloaded)"
 msgstr "الكتب الرائجة (الأكثر تحميلًا)"
 
-#: cps/web.py:595
+#: cps/web.py:604
 #, python-format
 msgid "Downloaded books by %(user)s"
 msgstr "الكتب المحملة بواسطة %(user)s"
 
-#: cps/web.py:628
+#: cps/web.py:637
 #, python-format
 msgid "Author: %(name)s"
 msgstr "المؤلف: %(name)s"
 
-#: cps/web.py:664
+#: cps/web.py:673
 #, python-format
 msgid "Publisher: %(name)s"
 msgstr "الناشر: %(name)s"
 
-#: cps/web.py:692
+#: cps/web.py:701
 #, python-format
 msgid "Series: %(serie)s"
 msgstr "السلسلة: %(serie)s"
 
-#: cps/web.py:706
+#: cps/web.py:715
 msgid "Rating: None"
 msgstr "التقييم: لا يوجد"
 
-#: cps/web.py:715
+#: cps/web.py:724
 #, python-format
 msgid "Rating: %(rating)s stars"
 msgstr "التقييم: %(rating)s نجوم"
 
-#: cps/web.py:746
+#: cps/web.py:755
 #, python-format
 msgid "File format: %(format)s"
 msgstr "تنسيق الملف: %(format)s"
 
-#: cps/web.py:783
+#: cps/web.py:792
 #, python-format
 msgid "Category: %(name)s"
 msgstr "الفئة: %(name)s"
 
-#: cps/web.py:812
+#: cps/web.py:821
 #, python-format
 msgid "Language: %(name)s"
 msgstr "اللغة: %(name)s"
 
-#: cps/web.py:940
+#: cps/web.py:949
 #, fuzzy
 msgid "Error loading magic shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/web.py:965
+#: cps/web.py:974
 #, python-format
 msgid "Magic Shelf&nbsp&nbsp&nbsp—&nbsp&nbsp&nbsp%(icon)s %(name)s"
 msgstr ""
 
-#: cps/web.py:1038
+#: cps/web.py:1047
 msgid "No rules provided"
 msgstr ""
 
-#: cps/web.py:1044
+#: cps/web.py:1053
 #, fuzzy
 msgid "Invalid rules format"
 msgstr "تنسيق عنوان البريد الإلكتروني غير صالح"
 
-#: cps/web.py:1066
+#: cps/web.py:1075
 msgid "Error processing rules"
 msgstr ""
 
-#: cps/web.py:1070
+#: cps/web.py:1079
 #, fuzzy
 msgid "Invalid request"
 msgstr "دور غير صالح"
 
-#: cps/web.py:1114
+#: cps/web.py:1123
 msgid "Name and rules are required"
 msgstr ""
 
-#: cps/web.py:1117 cps/web.py:1214
+#: cps/web.py:1126 cps/web.py:1223
 msgid "Shelf name too long (max 100 characters)"
 msgstr ""
 
-#: cps/web.py:1139
+#: cps/web.py:1148
 #, fuzzy
 msgid "Error creating shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/templates/layout.html:329 cps/web.py:1153
+#: cps/templates/layout.html:329 cps/web.py:1162
 #, fuzzy
 msgid "Create Magic Shelf"
 msgstr "إنشاء رف"
 
-#: cps/web.py:1207
+#: cps/web.py:1216
 msgid "Permission denied to change public status"
 msgstr ""
 
-#: cps/web.py:1211
+#: cps/web.py:1220
 #, fuzzy
 msgid "Shelf name is required"
 msgstr "هذا الحقل مطلوب"
 
-#: cps/web.py:1245
+#: cps/web.py:1254
 #, fuzzy
 msgid "Error updating shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/web.py:1260
+#: cps/web.py:1269
 #, fuzzy
 msgid "Edit Magic Shelf"
 msgstr "تحرير رف"
 
-#: cps/web.py:1273
+#: cps/web.py:1282
 #, fuzzy
 msgid "Shelf not found"
 msgstr "لم يتم العثور على المستخدم"
 
-#: cps/web.py:1278
+#: cps/web.py:1287
 msgid "Permission denied"
 msgstr ""
 
-#: cps/web.py:1309
+#: cps/web.py:1318
 #, fuzzy
 msgid "Shelf duplicated successfully"
 msgstr "تم حذف {} مستخدم(ين) بنجاح"
 
-#: cps/web.py:1315
+#: cps/web.py:1324
 #, fuzzy
 msgid "Error duplicating shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/templates/magic_shelf_edit.html:448 cps/web.py:1342
+#: cps/templates/magic_shelf_edit.html:448 cps/web.py:1351
 msgid ""
 "System shelves cannot be deleted. You can hide them in your user profile "
 "settings."
 msgstr ""
 
-#: cps/web.py:1359
+#: cps/web.py:1368
 #, fuzzy
 msgid "Error deleting shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/web.py:1375
+#: cps/web.py:1384
 msgid ""
 "You cannot hide your own shelves. Delete them instead if you don't want them."
 msgstr ""
 
-#: cps/web.py:1385
+#: cps/web.py:1394
 msgid "Shelf already hidden"
 msgstr ""
 
-#: cps/web.py:1399
+#: cps/web.py:1408
 #, fuzzy
 msgid "Error hiding shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/web.py:1413
+#: cps/web.py:1422
 msgid "Shelf was not hidden"
 msgstr ""
 
-#: cps/web.py:1422
+#: cps/web.py:1431
 #, fuzzy
 msgid "Error unhiding shelf"
 msgstr "خطأ في حذف الرف"
 
-#: cps/templates/admin.html:18 cps/web.py:1569
+#: cps/templates/admin.html:18 cps/web.py:1578
 msgid "Downloads"
 msgstr "التحميلات"
 
-#: cps/web.py:1721
+#: cps/web.py:1730
 msgid "File formats list"
 msgstr "قائمة تنسيقات الملفات"
 
-#: cps/web.py:1961 cps/web.py:1999
+#: cps/web.py:1970 cps/web.py:2008
 msgid "Please configure the SMTP mail settings first..."
 msgstr "يرجى تهيئة إعدادات بريد SMTP أولاً..."
 
-#: cps/web.py:1965
+#: cps/web.py:1974
 msgid "Oops! Please update your profile with a valid eReader Email."
 msgstr "عفوًا! يرجى تحديث ملفك الشخصي ببريد إلكتروني صالح للقارئ الإلكتروني."
 
-#: cps/web.py:1987
+#: cps/web.py:1996
 #, python-format
 msgid "Success! Book queued for sending to %(eReadermail)s"
 msgstr "نجاح! تم وضع الكتاب في قائمة الانتظار للإرسال إلى %(eReadermail)s"
 
-#: cps/web.py:1990 cps/web.py:2048
+#: cps/web.py:1999 cps/web.py:2057
 #, python-format
 msgid "Oops! There was an error sending book: %(res)s"
 msgstr "عفوًا! حدث خطأ أثناء إرسال الكتاب: %(res)s"
 
-#: cps/web.py:2007 cps/web.py:2017
+#: cps/web.py:2016 cps/web.py:2026
 msgid "No email addresses selected"
 msgstr ""
 
-#: cps/web.py:2024
+#: cps/web.py:2033
 msgid "Additional email addresses are disabled for your account."
 msgstr ""
 
-#: cps/web.py:2046
+#: cps/web.py:2055
 #, fuzzy
 msgid "Success! Book queued for sending to the selected address(es)!"
 msgstr "نجاح! تم وضع الكتاب في قائمة الانتظار للإرسال إلى %(eReadermail)s"
 
-#: cps/web.py:2065
+#: cps/web.py:2074
 msgid "Please wait one minute to register next user"
 msgstr "يرجى الانتظار دقيقة واحدة لتسجيل مستخدم آخر"
 
 #: cps/templates/layout.html:136 cps/templates/layout.html:181
-#: cps/templates/login.html:48 cps/templates/register.html:17 cps/web.py:2066
-#: cps/web.py:2070 cps/web.py:2075 cps/web.py:2079 cps/web.py:2085
-#: cps/web.py:2110 cps/web.py:2114 cps/web.py:2127 cps/web.py:2130
+#: cps/templates/login.html:48 cps/templates/register.html:17 cps/web.py:2075
+#: cps/web.py:2079 cps/web.py:2084 cps/web.py:2088 cps/web.py:2094
+#: cps/web.py:2119 cps/web.py:2123 cps/web.py:2136 cps/web.py:2139
 msgid "Register"
 msgstr "تسجيل"
 
-#: cps/web.py:2069 cps/web.py:2234
+#: cps/web.py:2078 cps/web.py:2243
 msgid "Connection error to limiter backend, please contact your administrator"
 msgstr "خطأ في الاتصال بالواجهة الخلفية للمُحدد، يرجى الاتصال بمسؤول النظام"
 
-#: cps/web.py:2074 cps/web.py:2126
+#: cps/web.py:2083 cps/web.py:2135
 msgid ""
 "Oops! Email server is not configured, please contact your administrator."
 msgstr "عفوًا! خادم البريد الإلكتروني غير مهيأ، يرجى الاتصال بمسؤول النظام."
 
-#: cps/web.py:2112
+#: cps/web.py:2121
 msgid "Oops! Your Email is not allowed."
 msgstr "عفوًا! بريدك الإلكتروني غير مسموح به."
 
-#: cps/web.py:2115
+#: cps/web.py:2124
 msgid "Success! Confirmation Email has been sent."
 msgstr "نجاح! تم إرسال بريد إلكتروني للتأكيد."
 
-#: cps/web.py:2163
+#: cps/web.py:2172
 #, fuzzy
 msgid ""
 "Authentication loop detected. If you're experiencing login issues, please "
 "contact your administrator."
 msgstr "مثيل Calibre-Web غير مهيأ، يرجى الاتصال بمسؤول النظام"
 
-#: cps/web.py:2208
+#: cps/web.py:2217
 #, fuzzy
 msgid ""
 "OAuth authentication is not properly configured. Please contact "
 "administrator."
 msgstr "عفوًا! خادم البريد الإلكتروني غير مهيأ، يرجى الاتصال بمسؤول النظام."
 
-#: cps/web.py:2213 cps/web.py:2240
+#: cps/web.py:2222 cps/web.py:2249
 msgid "Cannot activate LDAP authentication"
 msgstr "لا يمكن تفعيل مصادقة LDAP"
 
-#: cps/web.py:2222
+#: cps/web.py:2231
 msgid "Standard login is disabled."
 msgstr ""
 
-#: cps/web.py:2230
+#: cps/web.py:2239
 msgid "Please wait one minute before next login"
 msgstr "يرجى الانتظار دقيقة واحدة قبل تسجيل الدخول التالي"
 
-#: cps/web.py:2248
+#: cps/web.py:2257
 msgid "Username cannot be empty"
 msgstr ""
 
-#: cps/web.py:2260
+#: cps/web.py:2269
 #, python-format
 msgid "you are now logged in as: '%(nickname)s'"
 msgstr "لقد قمت الآن بتسجيل الدخول باسم: '%(nickname)s'"
 
-#: cps/web.py:2279
+#: cps/web.py:2288
 #, fuzzy, python-format
 msgid ""
 "Welcome! Your account has been automatically created. You are now logged in "
 "as: '%(nickname)s'"
 msgstr "تم بنجاح! أنت الآن مسجل الدخول باسم: %(nickname)s"
 
-#: cps/web.py:2284 cps/web.py:2287
+#: cps/web.py:2293 cps/web.py:2296
 #, fuzzy
 msgid ""
 "Authentication successful, but account creation failed. Please contact your "
 "administrator."
 msgstr "مثيل Calibre-Web غير مهيأ، يرجى الاتصال بمسؤول النظام"
 
-#: cps/web.py:2291
+#: cps/web.py:2300
 msgid ""
 "Authentication successful, but no local account found. Please contact your "
 "administrator to create your account."
 msgstr ""
 
-#: cps/web.py:2299
+#: cps/web.py:2308
 #, python-format
 msgid ""
 "Fallback Login as: '%(nickname)s', LDAP Server not reachable, or user not "
@@ -2405,41 +2405,41 @@ msgstr ""
 "تسجيل دخول احتياطي باسم: '%(nickname)s'، خادم LDAP غير قابل للوصول، أو "
 "المستخدم غير معروف"
 
-#: cps/web.py:2305
+#: cps/web.py:2314
 #, python-format
 msgid "Could not login: %(message)s"
 msgstr "تعذر تسجيل الدخول: %(message)s"
 
-#: cps/web.py:2328 cps/web.py:2329 cps/web.py:2372
+#: cps/web.py:2337 cps/web.py:2338 cps/web.py:2381
 msgid "Wrong Username or Password"
 msgstr "اسم المستخدم أو كلمة المرور خاطئة"
 
-#: cps/web.py:2337
+#: cps/web.py:2346
 msgid "New Password was sent to your email address"
 msgstr "تم إرسال كلمة مرور جديدة إلى عنوان بريدك الإلكتروني"
 
-#: cps/web.py:2341
+#: cps/web.py:2350
 msgid "An unknown error occurred. Please try again later."
 msgstr "حدث خطأ غير معروف. يرجى المحاولة مرة أخرى لاحقًا."
 
-#: cps/web.py:2343
+#: cps/web.py:2352
 msgid "Please enter valid username to reset password"
 msgstr "يرجى إدخال اسم مستخدم صالح لإعادة تعيين كلمة المرور"
 
-#: cps/web.py:2351
+#: cps/web.py:2360
 #, python-format
 msgid "You are now logged in as: '%(nickname)s'"
 msgstr "لقد قمت الآن بتسجيل الدخول باسم: '%(nickname)s'"
 
-#: cps/web.py:2667
+#: cps/web.py:2676
 msgid "Success! Profile Updated"
 msgstr "نجاح! تم تحديث الملف الشخصي"
 
-#: cps/web.py:2673
+#: cps/web.py:2682
 msgid "Oops! An account already exists for this Email."
 msgstr "عفوًا! يوجد حساب بالفعل لهذا البريد الإلكتروني."
 
-#: cps/web.py:2894
+#: cps/web.py:2903
 #, fuzzy
 msgid "Invalid book ID."
 msgstr "دور غير صالح"
