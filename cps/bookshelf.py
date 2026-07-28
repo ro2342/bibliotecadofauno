@@ -378,8 +378,9 @@ def api_export():
     if not cfg['token']:
         return _apply_export_cors(jsonify({"status": "error", "message": "export disabled"}), cfg['origin']), 404
 
-    provided = request.headers.get('X-Bookshelf-Token', '')
-    if not hmac.compare_digest(provided, cfg['token']):
+    # hmac.compare_digest() raises TypeError on non-ASCII str input - encode first.
+    provided = request.headers.get('X-Bookshelf-Token', '').encode('utf-8')
+    if not hmac.compare_digest(provided, cfg['token'].encode('utf-8')):
         return _apply_export_cors(jsonify({"status": "error", "message": "invalid token"}), cfg['origin']), 401
 
     user = ub.session.query(ub.User).filter_by(name=cfg['username']).first()

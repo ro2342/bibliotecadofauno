@@ -48,7 +48,13 @@ def _apply_cors(resp):
 
 
 def _token_ok():
-    return bool(EXPORT_TOKEN) and hmac.compare_digest(request.headers.get("X-Bookshelf-Token", ""), EXPORT_TOKEN)
+    # hmac.compare_digest() raises TypeError on non-ASCII str input (a real CPython
+    # restriction) - encode to bytes first so this works regardless of token content.
+    if not EXPORT_TOKEN:
+        return False
+    provided = request.headers.get("X-Bookshelf-Token", "").encode("utf-8")
+    expected = EXPORT_TOKEN.encode("utf-8")
+    return hmac.compare_digest(provided, expected)
 
 
 @app.route("/api/export", methods=["GET", "OPTIONS"])
