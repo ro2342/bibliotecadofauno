@@ -61,6 +61,10 @@ nenhuma, builda em segundos até num Raspberry Pi. Não tem pipeline de CI pra i
   `last_modified` de quando o status virou `lido` (`read_status = 1`).
 - Capa (`/api/cover/<id>`) não é protegida por token — `<img src>` não manda headers customizados, e uma
   imagem de capa sozinha não é dado sensível.
+- O sidecar não manda `currentProgress` (número de página, no modelo de dados do `ro2342/bookshelf` —
+  ver `app.js`). O `progress_percent` do Kobo é 0-100 (confirmado em `kosync.py`), não é página nenhuma,
+  então mandar esse valor só criaria um número de página falso. Só o `status` (quero-ler/lendo/lido)
+  vem do CWA por enquanto — é o que o sync realmente usa pra decidir se empurra o status pra frente.
 - Se o CWA mudar o schema dessas tabelas numa versão futura, o sidecar (não o CWA) vai precisar de um
   ajuste de SQL. Isso deve ser raro, mas é o trade-off consciente de não usar os modelos do próprio CWA.
 

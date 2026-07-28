@@ -82,22 +82,11 @@ def export():
             "SELECT book_id, read_status, last_modified, last_time_started_reading "
             "FROM book_read_link WHERE user_id = ?", (user_id,))}
 
-        progress_by_book = {}
-        for r in cwa.execute(
-                "SELECT ks.book_id AS book_id, kb.progress_percent AS progress_percent "
-                "FROM kobo_reading_state ks JOIN kobo_bookmark kb "
-                "ON kb.kobo_reading_state_id = ks.id WHERE ks.user_id = ?", (user_id,)):
-            progress_by_book[r["book_id"]] = r["progress_percent"]
-
         base_url = request.host_url.rstrip("/")
         books = []
         for b in cal.execute("SELECT id, title, author_sort, has_cover FROM books"):
             rb = read_by_book.get(b["id"])
             status = STATUS_MAP.get(rb["read_status"], "quero-ler") if rb else "quero-ler"
-
-            progress = progress_by_book.get(b["id"]) or 0.0
-            if status == "lido":
-                progress = 1.0
 
             comment = cal.execute("SELECT text FROM comments WHERE book = ?", (b["id"],)).fetchone()
 
@@ -107,7 +96,12 @@ def export():
                 "coverUrl": "{}/api/cover/{}".format(base_url, b["id"]) if b["has_cover"] else "",
                 "synopsis": comment["text"] if comment else "",
                 "status": status,
-                "currentProgress": progress,
+                # Not currentProgress: on the ro2342/bookshelf side that field means
+                # "current page number" for mediaType digital/fisico (see app.js's
+                # progress editor), and Kobo's own progress_percent (0-100, confirmed
+                # against cps/progress_syncing/protocols/kosync.py's ">= 99.0" check)
+                # isn't a page number - sending it would just show a bogus page count.
+                # Status alone carries what the sync in app.js actually needs.
                 "startDate": rb["last_time_started_reading"] if rb else None,
                 "endDate": rb["last_modified"] if (rb and rb["read_status"] == 1) else None,
                 "mediaType": "digital",
